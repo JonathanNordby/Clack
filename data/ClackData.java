@@ -31,7 +31,7 @@ abstract public class ClackData {
 	 * default constructor, calls on another constructor
 	 */
 	public ClackData() {
-		this("Anon", 2);
+		this("Anon", 0);
 	}
 	
 	/**
