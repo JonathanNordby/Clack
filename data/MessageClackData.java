@@ -60,7 +60,7 @@ public class MessageClackData extends ClackData {
 	}
 	
 	/**
-	 * returns a full description of the object including the super class instance variables
+	 * returns a description of the class including all local instance variables and super class variables
 	 */
 	public String toString() {
 		return("userName: " + getUserName() + "\n" 
