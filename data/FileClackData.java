@@ -94,4 +94,12 @@ public class FileClackData extends ClackData {
 		
 		return hash;
 	}
+	
+	public String toString() {
+		return("userName: " + getUserName() + "\n" 
+				+ "type: " + getType() + "\n"
+				+ "date: " + getDate() + "\n"
+				+ "file name: " + getFileName() + "\n"
+				+ "file contents: " + getData());
+	}
 }

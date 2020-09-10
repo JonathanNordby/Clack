@@ -64,9 +64,9 @@ public class MessageClackData extends ClackData {
 	 */
 	public String toString() {
 		return("userName: " + getUserName() + "\n" 
-	+ "type: " + getType() + "\n"
-	+ "date: " + getDate() + "\n"
-	+ "message: " + message);
+				+ "type: " + getType() + "\n"
+				+ "date: " + getDate() + "\n"
+				+ "message: " + message);
 	}
 
 }
