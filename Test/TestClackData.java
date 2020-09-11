@@ -104,15 +104,63 @@ public class TestClackData {
 		/**
 		 * testing the file default constructor
 		 */
+		//testing setter for fileName
+		System.out.println("Before: " + testFileDefault.getFileName());
+		testFileDefault.setFileName("success");
+		System.out.println("Setting...");
+		System.out.println("After: " + testFileDefault.getFileName());
+		testFileDefault.setFileName("");
+		System.out.println("returning to normal: " + testFileDefault.getFileName());
+		
 		//testing equals on the default file constructor, should return true
 		System.out.println("should be true: " + testFileDefault.equals(testFileDefault2));
 		System.out.println();
 		
-		//testing setter for fileName
-		System.out.println("Before: " + testFileDefault.getFileName());
-		testFileDefault.setFileName("change");
+		//testing  hashcode on the default file constructor, should be the same
+		System.out.println("hash code: " + testFileDefault.hashCode());
+		System.out.println("hash code: " + testFileDefault2.hashCode());
+		System.out.println("hash code: " + testFileDefault.hashCode());
+		System.out.println("hash code: " + testFileDefault2.hashCode());
+		System.out.println();
+		
+		//testing toString for the default file constructor
+		System.out.println(testFileDefault.toString());
+		System.out.println();
+		
+		
+		
+		
+		/**
+		 * testing the other file constructor
+		 */
+		//testing setter for file name
+		System.out.println("Before: " + testFileOther.getFileName());
+		testFileOther.setFileName("success");
 		System.out.println("Setting...");
-		System.out.println("After: " + testFileDefault.getFileName());
+		System.out.println("After: " + testFileOther.getFileName());
+		testFileOther.setFileName("test file");
+		System.out.println("returning to normal: " + testFileOther.getFileName());
+		System.out.println();
+		
+		//testing equals on the other file constructor, should return true, false, false, false
+		System.out.println("should be true: " + testFileOther.equals(testFileOther2));
+		System.out.println("should be false: " + testFileOther.equals(testFileOther3));
+		System.out.println("should be false: " + testFileOther.equals(testFileOther4));
+		System.out.println("should be false: " + testFileOther.equals(testFileOther5));
+		System.out.println();
+		
+		//testing  hashcode on the other file constructor, should be 2 of the same numbers followed by 3 unique numbers
+		System.out.println("hash code: " + testFileOther.hashCode());
+		System.out.println("hash code: " + testFileOther2.hashCode());
+		System.out.println("hash code: " + testFileOther3.hashCode());
+		System.out.println("hash code: " + testFileOther4.hashCode());
+		System.out.println("hash code: " + testFileOther5.hashCode());
+		System.out.println();
+		
+		//testing toString for the other file constructor
+		System.out.println(testFileOther.toString());
+		System.out.println();
+		
 		
 	}
 

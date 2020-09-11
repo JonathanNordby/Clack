@@ -23,7 +23,7 @@ public class FileClackData extends ClackData {
 	public FileClackData(String userName, String fileName, int type) {
 		super(userName, type);
 		this.fileName = fileName;
-		this.fileContents = null;
+		this.fileContents = "";
 	}
 	
 	/**
@@ -95,6 +95,9 @@ public class FileClackData extends ClackData {
 		return hash;
 	}
 	
+	/**
+	 * outputs the information of the file data object, including the instance variables in the super class
+	 */
 	public String toString() {
 		return("userName: " + getUserName() + "\n" 
 				+ "type: " + getType() + "\n"
