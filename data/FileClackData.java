@@ -30,7 +30,7 @@ public class FileClackData extends ClackData {
 	 * default constructor, calls the other constructor which calls the super class constructor
 	 */
 	public FileClackData() {
-		this("Anon", null, 0);
+		this("Anon", "", 0);
 	}
 	
 	/**

@@ -17,7 +17,7 @@ public class MessageClackData extends ClackData {
 	 * @param message
 	 * @param type
 	 */
-	MessageClackData(String userName, String message, int type) {
+	public MessageClackData(String userName, String message, int type) {
 		super(userName, type);
 		this.message = message;
 	}
@@ -25,7 +25,7 @@ public class MessageClackData extends ClackData {
 	/**
 	 * default constructor, calls the constructor above which relies on the superclass
 	 */
-	MessageClackData(){
+	public MessageClackData(){
 		this("Anon", "", 0);
 	}
 	
