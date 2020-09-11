@@ -2,6 +2,12 @@ package Test;
 import data.MessageClackData;
 import data.FileClackData;
 
+/**
+ * test class for the data package
+ * @author Stephen Miner
+ *
+ */
+
 public class TestClackData {
 	public static void main(String args[]) {
 		MessageClackData testMessageDefault = new MessageClackData();
