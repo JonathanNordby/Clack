@@ -23,7 +23,7 @@ public class FileClackData extends ClackData {
 	public FileClackData(String userName, String fileName, int type) {
 		super(userName, type);
 		this.fileName = fileName;
-		this.fileContents = "";
+		this.fileContents = null;
 	}
 	
 	/**
@@ -90,8 +90,10 @@ public class FileClackData extends ClackData {
 		hash = 37 * hash + getUserName().hashCode();
 		hash = 37 * hash + getType();
 		hash = 37 * hash + getFileName().hashCode();
-		hash = 37 * hash + getData().hashCode();
-		
+		if(getData() == null)
+			hash = hash+1;
+		else
+			hash = 37 * hash + getData().hashCode();
 		return hash;
 	}
 	
