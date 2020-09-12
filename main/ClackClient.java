@@ -2,12 +2,6 @@ package main;
 
 import data.ClackData;
 
-/**
- * The Client version of the Clack program
- * @author Jonathan Nordby
- *
- */
-
 public class ClackClient {
 	
 	private String userName, hostName;
@@ -16,54 +10,54 @@ public class ClackClient {
 	private ClackData dataToSendToServer, dataToReceiveFromServer;
 	private final static int DEFAULT_PORT = 7000;
 	
-	public ClackClient(String userName, String hostName) {
+	ClackClient(String userName, String hostName) {
 		this(userName, hostName, DEFAULT_PORT);
 	}
 
-	public ClackClient(String userName) {
+	ClackClient(String userName) {
 		this(userName, "localhost", DEFAULT_PORT);
 	}
 	
-	public ClackClient() {
+	ClackClient() {
 		this("anonymous", "localhost", DEFAULT_PORT);
 	}
 	
-	public ClackClient(String userName, String hostName, int port) {
+	ClackClient(String userName, String hostName, int port) {
 		
 		this.userName = userName;
 		this.hostName = hostName;
 		this.port = port;
 	}
 	
-	public void start() {
+	void start() {
 		//TODO Implement Later
 	}
 	
-	public void readClientData() {
+	void readClientData() {
 		//TODO Implement Later
 	}
 	
-	public void sendData() {
+	void sendData() {
 		//TODO Implement Later
 	}
 	
-	public void receiveData() {
+	void receiveData() {
 		//TODO Implement Later
 	}
 	
-	public void printData() {
+	void printData() {
 		//TODO Implement Later
 	}
 	
-	public String getUserName() {
+	String getUserName() {
 		return userName;
 	}
 	
-	public String getHostName() {
+	String getHostName() {
 		return hostName;
 	}
 	
-	public int getPort() {
+	int getPort() {
 		return port;
 	}
 	
@@ -74,8 +68,8 @@ public class ClackClient {
 		result = 37 * result + Boolean.hashCode(closeConnection);
 		result = 37 * result + userName.hashCode();
 		result = 37 * result + hostName.hashCode();
-		result = 37 * result + (dataToSendToServer == null ? 0 : dataToSendToServer.hashCode());
-		result = 37 * result + (dataToReceiveFromServer == null ? 0 : dataToReceiveFromServer.hashCode());
+		result = 37 * result + dataToSendToServer.hashCode();
+		result = 37 * result + dataToReceiveFromServer.hashCode();
 		return result;
 	}
 	
