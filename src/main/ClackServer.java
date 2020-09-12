@@ -104,6 +104,6 @@ public class ClackServer {
 	
 	@Override
 	public String toString() {
-		return "Server: " + port + " " + closeConnection + " " + dataToReceiveFromClient.toString() + " " + dataToSendToClient.toString();
+		return "Server: " + port + " " + closeConnection + " " + (dataToReceiveFromClient == null ? "null" : dataToReceiveFromClient.toString()) + " " + (dataToSendToClient == null ? "null" : dataToSendToClient.toString());
 	}
 }
