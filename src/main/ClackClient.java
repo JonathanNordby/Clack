@@ -19,7 +19,7 @@ public class ClackClient {
 	public ClackClient(String userName, String hostName) {
 		this(userName, hostName, DEFAULT_PORT);
 	}
-
+	
 	public ClackClient(String userName) {
 		this(userName, "localhost", DEFAULT_PORT);
 	}

@@ -8,7 +8,7 @@ import data.ClackData;
  *
  */
 public class ClackServer {
-
+	
 	private int port;
 	private boolean closeConnection;
 	ClackData dataToReceiveFromClient;
@@ -105,5 +105,6 @@ public class ClackServer {
 	@Override
 	public String toString() {
 		return "Server: " + port + " " + closeConnection + " " + (dataToReceiveFromClient == null ? "null" : dataToReceiveFromClient.toString()) + " " + (dataToSendToClient == null ? "null" : dataToSendToClient.toString());
+		
 	}
 }
