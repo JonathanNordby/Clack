@@ -74,10 +74,32 @@ public class ClackServer {
 			return false;
 		}
 		ClackServer otherClackServer = (ClackServer) other;
-		return  port == otherClackServer.port && 
-				closeConnection == otherClackServer.closeConnection &&
-				dataToReceiveFromClient == otherClackServer.dataToReceiveFromClient &&
-				dataToSendToClient == otherClackServer.dataToSendToClient;
+		if (dataToSendToClient == null && otherClackServer.dataToSendToClient == null) {
+			if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
+				return port == otherClackServer.port &&
+					   closeConnection == otherClackServer.closeConnection;
+			} else {
+				return port == otherClackServer.port &&
+					   closeConnection == otherClackServer.closeConnection &&
+					   dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);				
+			}
+		} else if (dataToSendToClient != null && otherClackServer.dataToSendToClient != null) {
+			if (dataToReceiveFromClient != null && otherClackServer.dataToReceiveFromClient != null) {
+				return port == otherClackServer.port &&
+					   closeConnection == otherClackServer.closeConnection &&
+					   dataToSendToClient.equals(otherClackServer.dataToSendToClient) && 
+					   dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
+			} else {
+				if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
+					return port == otherClackServer.port &&
+						   closeConnection == otherClackServer.closeConnection &&
+					       dataToSendToClient.equals(otherClackServer.dataToSendToClient);
+				}
+				return false;
+			}
+		} else {
+			return false;
+		}	
 	}
 	
 	@Override

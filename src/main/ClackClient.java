@@ -86,12 +86,40 @@ public class ClackClient {
 		}
 		ClackClient otherClient = (ClackClient) other;
 		
-		return userName == otherClient.userName &&
-			   hostName == otherClient.hostName &&
-			   port == otherClient.port &&
-			   closeConnection == otherClient.closeConnection &&
-			   dataToSendToServer.equals(otherClient.dataToSendToServer) && 
-			   dataToReceiveFromServer.equals(otherClient.dataToReceiveFromServer);
+		if (dataToSendToServer == null && otherClient.dataToSendToServer == null) {
+			if (dataToReceiveFromServer == null && otherClient.dataToReceiveFromServer == null) {
+				return userName == otherClient.userName &&
+					   hostName == otherClient.hostName &&
+					   port == otherClient.port &&
+					   closeConnection == otherClient.closeConnection;
+			} else {
+				return userName == otherClient.userName &&
+					   hostName == otherClient.hostName &&
+					   port == otherClient.port &&
+					   closeConnection == otherClient.closeConnection &&
+					   dataToReceiveFromServer.equals(otherClient.dataToReceiveFromServer);				
+			}
+		} else if (dataToSendToServer != null && otherClient.dataToSendToServer != null) {
+			if (dataToReceiveFromServer != null && otherClient.dataToReceiveFromServer != null) {
+				return userName == otherClient.userName &&
+					   hostName == otherClient.hostName &&
+					   port == otherClient.port &&
+					   closeConnection == otherClient.closeConnection &&
+					   dataToSendToServer.equals(otherClient.dataToSendToServer) && 
+					   dataToReceiveFromServer.equals(otherClient.dataToReceiveFromServer);
+			} else {
+				if (dataToReceiveFromServer == null && otherClient.dataToReceiveFromServer == null) {
+					return userName == otherClient.userName &&
+							   hostName == otherClient.hostName &&
+							   port == otherClient.port &&
+							   closeConnection == otherClient.closeConnection &&
+							   dataToSendToServer.equals(otherClient.dataToSendToServer);
+				}
+				return false;
+			}
+		} else {
+			return false;
+		}	
 	}
 	
 	@Override
