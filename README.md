@@ -1,2 +1,0 @@
-# Clack
-Clarkson Slack
