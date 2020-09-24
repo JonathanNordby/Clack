@@ -12,7 +12,7 @@ public class MessageClackData extends ClackData {
 	private String message;
 	
 	/**
-	 * constructor to set up the username, mesage, and type. Calls a constructor from it's superclass ClackData
+	 * constructor to set up the username, mesage, and type. Calls a constructor from its superclass ClackData
 	 * @param userName
 	 * @param message
 	 * @param type
@@ -29,6 +29,13 @@ public class MessageClackData extends ClackData {
 		this("Anon", "", 0);
 	}
 	
+	/**
+	 * Similar to the (String,String,int) constructor, except it also takes a key and encrypts the message
+	 * @param userName
+	 * @param message
+	 * @param key
+	 * @param type
+	 */
 	public MessageClackData(String userName, String message, String key, int type) {
 		super(userName,type);
 		this.message = encrypt(message, key);

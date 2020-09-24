@@ -79,11 +79,22 @@ abstract public class ClackData {
 	}
 	
 	/**
-	 * returns the data contained in this class 
+	 * returns the data contained in this class
 	 */
 	abstract public String getData(); 
+	/**
+	 * returns the data contained in this class, with the message or file contents encrypted
+	 * @param key
+	 * @return
+	 */
 	abstract public String getData(String key);
 	
+	/**
+	 * uses the viginere cipher to encrypt a string using a key
+	 * @param inputStringToEncrypt
+	 * @param key
+	 * @return
+	 */
 	protected String encrypt(String inputStringToEncrypt, String key) {
 		String encodedString = "";
 	    char inputStringArray[] = inputStringToEncrypt.toCharArray();
@@ -106,6 +117,12 @@ abstract public class ClackData {
         return encodedString;
 	}
 	
+	/**
+	 * uses the viginere cipher to decrypt a string using a key
+	 * @param inputStringToDecrypt
+	 * @param key
+	 * @return
+	 */
 	protected String decrypt(String inputStringToDecrypt, String key) {
 		String decodedString = "";
 		char inputStringArray[] = inputStringToDecrypt.toCharArray();

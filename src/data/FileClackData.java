@@ -56,6 +56,9 @@ public class FileClackData extends ClackData {
 		return fileContents;
 	}
 	
+	/**
+	 * encrypt and return the file contents
+	 */
 	public String getData(String key) {
 		return(super.decrypt(fileContents,key));
 	}
@@ -87,6 +90,11 @@ public class FileClackData extends ClackData {
 		this.fileContents = result;
 	}
 	
+	/**
+	 * Does the same as readFileContents() except encrypts the contents when storing them.
+	 * @param key
+	 * @throws IOException
+	 */
 	public void readFileContents(String key) throws IOException {
 		final String EOF = null;
 		String unencryptedResult = "";
@@ -108,10 +116,12 @@ public class FileClackData extends ClackData {
 		}
 		this.fileContents = super.encrypt(unencryptedResult, key);
 	}
+	
 	/**
-	 * does nothing right now
+	 * opens the file with the name fileName and writes fileContents to the file.
+	 * @throws IOException
 	 */
-	public void writeFileContents() {
+	public void writeFileContents() throws IOException {
 		try {
 			File file = new File(fileName);
 			FileWriter fw = new FileWriter(file);
@@ -127,7 +137,12 @@ public class FileClackData extends ClackData {
 		}
 	}
 	
-	public void writeFileContents(String key) {
+	/**
+	 * does the same as writeFileContents(), except uses a key to encrypt the contents
+	 * @param key
+	 * @throws IOException
+	 */
+	public void writeFileContents(String key) throws IOException{
 		try {
 			File file = new File(fileName);
 			FileWriter fw = new FileWriter(file);
