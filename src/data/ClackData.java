@@ -82,4 +82,48 @@ abstract public class ClackData {
 	 * returns the data contained in this class 
 	 */
 	abstract public String getData(); 
+	
+	protected String encrypt(String inputStringToEncrypt, String key) {
+		String encodedString = "";
+	    char inputStringArray[] = inputStringToEncrypt.toCharArray();
+	    char keyArray[] = key.toCharArray();
+	        
+	    for (int inputIndex = 0, keyIndex = 0; inputIndex <= inputStringToEncrypt.length()-1; inputIndex++) {
+	        char currentChar = inputStringArray[inputIndex];
+            if (currentChar <= 'z' && currentChar  >= 'a') {
+	            encodedString += (char)((currentChar + keyArray[keyIndex] - (2*'a')) % 26 + 'a');
+	            keyIndex = keyIndex++ % key.length();
+	        }
+            else if (currentChar <= 'Z' && currentChar  >= 'A') {
+	            encodedString += (char)((currentChar + keyArray[keyIndex] - (2*'A')) % 26 + 'A');
+	            keyIndex = keyIndex++ % key.length();
+            }
+            else if (currentChar == ' ') {
+            	encodedString += currentChar;
+            }
+        }
+        return encodedString;
+	}
+	
+	protected String decrypt(String inputStringToDecrypt, String key) {
+		String decodedString = "";
+		char inputStringArray[] = inputStringToDecrypt.toCharArray();
+		char keyArray[] = key.toCharArray();
+		
+		for (int inputIndex = 0, keyIndex = 0; inputIndex < inputStringToDecrypt.length(); inputIndex++) {
+			char currentChar = inputStringArray[inputIndex];
+			if (currentChar <= 'z' && currentChar >= 'a') {
+				decodedString += (char)((currentChar - keyArray[keyIndex] + 26) % 26 + 'a');
+				keyIndex = keyIndex++ % key.length();
+			}
+			else if(currentChar <= 'Z' && currentChar >= 'A') {
+				decodedString += (char)((currentChar - keyArray[keyIndex] + 26) % 26 + 'A');
+				keyIndex = keyIndex++ % key.length();
+			}
+			else if (currentChar == ' ') {
+				decodedString += currentChar;
+			}
+		}
+		return decodedString;
+	}
 }
