@@ -121,7 +121,7 @@ public class FileClackData extends ClackData {
 	 * opens the file with the name fileName and writes fileContents to the file.
 	 * @throws IOException
 	 */
-	public void writeFileContents() throws IOException {
+	public void writeFileContents() {
 		try {
 			File file = new File(fileName);
 			FileWriter fw = new FileWriter(file);
@@ -142,7 +142,7 @@ public class FileClackData extends ClackData {
 	 * @param key
 	 * @throws IOException
 	 */
-	public void writeFileContents(String key) throws IOException{
+	public void writeFileContents(String key) {
 		try {
 			File file = new File(fileName);
 			FileWriter fw = new FileWriter(file);
