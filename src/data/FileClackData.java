@@ -1,5 +1,5 @@
 package data;
-
+import java.io.*;
 
 /**
  * subclass of ClackData for when the user sends a file
@@ -56,13 +56,58 @@ public class FileClackData extends ClackData {
 		return fileContents;
 	}
 	
-	/**
-	 * does nothing right now
-	 */
-	public void readFileContents() {
-		
+	public String getData(String key) {
+		return(super.decrypt(fileContents,key));
 	}
 	
+	/**
+	 * opens a file with the name FileName, reads in all the lines of the file into a string, then sets fileContents
+	 * equal to that string.
+	 * @throws IOException
+	 */
+	public void readFileContents() throws IOException {
+		final String EOF = null;
+		String result = "";
+		try {
+			File file = new File(fileName);
+			FileReader fr = new FileReader(file);
+			BufferedReader inFromFile = new BufferedReader(fr);
+
+			String input;
+			while((input = inFromFile.readLine()) != EOF) {
+				result += input;
+			}
+			
+		inFromFile.close();
+		}catch(FileNotFoundException fnf) {
+			System.err.println("File not found");
+		}catch (IOException ioe) {
+			System.err.println("issue with reading"); 
+		}
+		this.fileContents = result;
+	}
+	
+	public void readFileContents(String key) throws IOException {
+		final String EOF = null;
+		String unencryptedResult = "";
+		try {
+			File file = new File(fileName);
+			FileReader fr = new FileReader(file);
+			BufferedReader inFromFile = new BufferedReader(fr);
+			
+			String input;
+			while((input = inFromFile.readLine()) != EOF) {
+				unencryptedResult += input;
+			}
+		
+			inFromFile.close();		
+		} catch(FileNotFoundException fnf) {
+			System.err.println("File not found");
+		} catch(IOException ioe) {
+			System.err.println("issue with reading");
+		}
+		this.fileContents = super.encrypt(unencryptedResult, key);
+	}
 	/**
 	 * does nothing right now
 	 */
@@ -106,5 +151,6 @@ public class FileClackData extends ClackData {
 				+ "date: " + getDate() + "\n"
 				+ "file name: " + getFileName() + "\n"
 				+ "file contents: " + getData());
+	
 	}
 }

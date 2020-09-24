@@ -29,11 +29,20 @@ public class MessageClackData extends ClackData {
 		this("Anon", "", 0);
 	}
 	
+	public MessageClackData(String userName, String message, String key, int type) {
+		super(userName,type);
+		this.message = encrypt(message, key);
+	}
+	
 	/**
 	 * return the instant message
 	 */
 	public String getData() {
 		return this.message;
+	}
+	
+	public String getData(String key) {
+		return (super.decrypt(message, key));
 	}
 	
 	

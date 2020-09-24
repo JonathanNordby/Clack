@@ -3,6 +3,7 @@
 package data;
 
 import java.util.Date;
+import java.io.*;
 
 /**
  * This class is the superclass for MessageClackData and FileClackData
@@ -82,6 +83,7 @@ abstract public class ClackData {
 	 * returns the data contained in this class 
 	 */
 	abstract public String getData(); 
+	abstract public String getData(String key);
 	
 	protected String encrypt(String inputStringToEncrypt, String key) {
 		String encodedString = "";
