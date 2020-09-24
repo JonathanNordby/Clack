@@ -112,7 +112,35 @@ public class FileClackData extends ClackData {
 	 * does nothing right now
 	 */
 	public void writeFileContents() {
-		
+		try {
+			File file = new File(fileName);
+			FileWriter fw = new FileWriter(file);
+			PrintWriter writeToFile = new PrintWriter(fw, true);
+			
+			writeToFile.println(fileContents);
+			writeToFile.close();
+			
+		}catch (FileNotFoundException fnfe) {
+			System.err.println("File not found");
+		}catch (IOException IOE) {
+			System.err.println("issue with reading");
+		}
+	}
+	
+	public void writeFileContents(String key) {
+		try {
+			File file = new File(fileName);
+			FileWriter fw = new FileWriter(file);
+			PrintWriter writeToFile = new PrintWriter(fw, true);
+			
+			writeToFile.println(super.encrypt(fileContents, key));
+			writeToFile.close();
+			
+		}catch (FileNotFoundException fnfe) {
+			System.err.println("File not found");
+		}catch (IOException IOE) {
+			System.err.println("issue with reading");
+		}
 	}
 	
 	/**

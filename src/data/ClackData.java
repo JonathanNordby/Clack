@@ -3,7 +3,6 @@
 package data;
 
 import java.util.Date;
-import java.io.*;
 
 /**
  * This class is the superclass for MessageClackData and FileClackData
