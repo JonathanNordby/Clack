@@ -181,7 +181,7 @@ public class TestClackData {
 		 */
 		
 		//this should return an encrypted line followed by the original line again preserving punctuation, capitalization, whitespace, etc.
-		/*Epected output:
+		/*Expected output:
 		 * Mlal sw y mikm wiqleyx....;;;;....
 		 * This is a test message....;;;;....
 		 */
