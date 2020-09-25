@@ -21,7 +21,7 @@ public class ClackClient {
 	private ClackData dataToSendToServer, dataToReceiveFromServer;
 	private final static int DEFAULT_PORT = 7000;
 	private Scanner inFromStd;
-	private final String KEY = "Arma virumque cano";
+	private final String KEY = "Armavirumquecano";
 	
 	
 	public ClackClient(String userName, String hostName) {
@@ -53,9 +53,7 @@ public class ClackClient {
 			readClientData();
 			printData();
 		} while(!closeConnection);
-		
-		
-		
+		inFromStd.close();
 	}
 	
 	public void readClientData() {
@@ -63,15 +61,21 @@ public class ClackClient {
 		String input;
 		if (inFromStd.hasNext()) {
 			input = inFromStd.nextLine();
-			System.out.println(input);
+//			System.out.println(input);
 			if (input == "DONE") {
 				closeConnection = true;
 			} else if (input.startsWith("SENDFILE")) {
 				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1), ClackData.CONSTANT_SENDFILE);
 				if (dataToSendToServer instanceof FileClackData) {
+						try {
+							((FileClackData) dataToSendToServer).readFileContents(KEY);
+						} catch (IOException e) {
+							System.err.println("Error: unable to read file.DON");
+						}
 						((FileClackData) dataToSendToServer).writeFileContents(KEY);
 				}
 			} else if (input == "LISTUSERS") {
+				System.out.println("Not Yet Supported");
 				//NOTHING YET
 			} else {
 				dataToSendToServer = new MessageClackData(userName, input, KEY, ClackData.CONSTANT_SENDMESSAGE);
@@ -88,8 +92,7 @@ public class ClackClient {
 	}
 	
 	public void printData() {
-		System.out.println(dataToSendToServer);
-		
+		System.out.println(dataToSendToServer.getData(KEY));
 	}
 	
 	public String getUserName() {
