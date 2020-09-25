@@ -1,5 +1,11 @@
 package Test;
 import data.MessageClackData;
+<<<<<<< HEAD
+=======
+
+import java.io.IOException;
+
+>>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
 import data.ClackData;
 import data.FileClackData;
 
@@ -10,7 +16,11 @@ import data.FileClackData;
  */
 
 public class TestClackData {
+<<<<<<< HEAD
 	public static void main(String args[]) {
+=======
+	public static void main(String args[]) throws IOException {
+>>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
 		ClackData testMessageDefault = new MessageClackData();
 		ClackData testMessageDefault2 = new MessageClackData();
 		
@@ -151,9 +161,15 @@ public class TestClackData {
 		
 		//testing equals on the other file constructor, should return true, false, false, false
 		System.out.println("should be true: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther2));
+<<<<<<< HEAD
 		System.out.println("should be false: " + ((FileClackData) testFileOther).equals((FileClackData)testFileOther3));
 		System.out.println("should be false: " + ((FileClackData) testFileOther).equals((FileClackData)testFileOther4));
 		System.out.println("should be false: " + ((FileClackData) testFileOther).equals((FileClackData)testFileOther5));
+=======
+		System.out.println("should be false: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther3));
+		System.out.println("should be false: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther4));
+		System.out.println("should be false: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther5));
+>>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
 		System.out.println();
 		
 		//testing  hashcode on the other file constructor, should be 2 of the same numbers followed by 3 unique numbers
@@ -168,6 +184,43 @@ public class TestClackData {
 		System.out.println(testFileOther.toString());
 		System.out.println();
 		
+<<<<<<< HEAD
+=======
+		
+		/*
+		 * 
+		 * 
+		 * 
+		 * TESTING FOR PART 2 OF THE PROJECT
+		 * __________________________________
+		 */
+		
+		//this should return an encrypted line followed by the original line again preserving punctuation, capitalization, whitespace, etc.
+		/*Expected output:
+		 * Mlal sw y mikm wiqleyx....;;;;....
+		 * This is a test message....;;;;....
+		 */
+		ClackData testMessageEncryption = new MessageClackData("Stephen", "This is a test message....;;;;....", "TestKey", 2); //new constructor
+		System.out.println(((MessageClackData)testMessageEncryption).getData()); //no key get data is already tested above
+		System.out.println(((MessageClackData)testMessageEncryption).getData("TestKey")); //testing key get data
+		System.out.println();
+		
+		//this should return the unsecurely read line, followed by the same line after it has been read securely then decrypted by getData(String key), followed by the encrypted version of the data returned by getData()
+		/*expected output:
+		 * Test file content.
+		 * Test file content.
+		 * Mikm pmjx gggdilm
+		 */
+		ClackData testFileEncryption = new FileClackData("Stephen", "test.txt", 2);
+		((FileClackData)testFileEncryption).readFileContents(); //testing unsecure file reads
+		((FileClackData)testFileEncryption).writeFileContents(); //testing unsecure file writes
+		System.out.println(((FileClackData)testFileEncryption).getData()); //no key get data is already tested above
+		((FileClackData)testFileEncryption).readFileContents("TestKey"); //testing secure file reads
+		System.out.println(((FileClackData)testFileEncryption).getData("TestKey")); //testing key get data
+		System.out.println(((FileClackData)testFileEncryption).getData());
+		((FileClackData)testFileEncryption).writeFileContents("TestKey"); //testing secure writes, check if Test.txt says "Test file content." If it does this also confirms that the unsecure file write works as well
+
+>>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
 	}
 
 	 

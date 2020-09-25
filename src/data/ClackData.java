@@ -79,6 +79,7 @@ abstract public class ClackData {
 	}
 	
 	/**
+<<<<<<< HEAD
 	 * returns the data contained in this class 
 	 */
 	abstract public String getData(); 
@@ -101,10 +102,56 @@ abstract public class ClackData {
             else if (currentChar == ' ') {
             	encodedString += currentChar;
             }
+=======
+	 * returns the data contained in this class
+	 */
+	abstract public String getData(); 
+	/**
+	 * returns the data contained in this class, with the message or file contents encrypted
+	 * @param key
+	 * @return
+	 */
+	abstract public String getData(String key);
+	
+	/**
+	 * uses the viginere cipher to encrypt a string using a key
+	 * @param inputStringToEncrypt
+	 * @param key
+	 * @return
+	 */
+	protected String encrypt(String inputStringToEncrypt, String key) {
+		String encodedString = "";
+	    char inputStringArray[] = inputStringToEncrypt.toCharArray();
+	    int inputStringLength = inputStringToEncrypt.length();
+	    char keyArray[] = key.toCharArray();
+	    char newKeyArray[] = new char[inputStringLength];
+	   
+	    for(int index = 0, secondIndex = 0; index < inputStringLength; index++, secondIndex++) {
+	    	if(secondIndex == key.length())
+	    		secondIndex = 0;
+	    	newKeyArray[index] = keyArray[secondIndex];
+	    	 }
+	        
+	    for (int inputIndex = 0, keyIndex = 0; inputIndex <= inputStringLength-1; inputIndex++) {
+	        char currentChar = inputStringArray[inputIndex];
+            if (currentChar <= 'z' && currentChar  >= 'a') {
+	            encodedString += (char)((currentChar + Character.toLowerCase(newKeyArray[keyIndex]) - (2*'a')) % 26 + 'a');
+	            keyIndex = keyIndex++ % key.length();
+	            keyIndex++;
+	        }
+            else if (currentChar <= 'Z' && currentChar  >= 'A') {
+	            encodedString += (char)((currentChar + Character.toUpperCase(newKeyArray[keyIndex]) - (2*'A')) % 26 + 'A');
+	            keyIndex = keyIndex++ % newKeyArray.length;
+	            keyIndex++;
+            }
+            else
+            	encodedString += currentChar;
+>>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
         }
         return encodedString;
 	}
 	
+<<<<<<< HEAD
 	protected String decrypt(String inputStringToDecrypt, String key) {
 		String decodedString = "";
 		char inputStringArray[] = inputStringToDecrypt.toCharArray();
@@ -128,3 +175,43 @@ abstract public class ClackData {
 	}
 }
 
+=======
+	/**
+	 * uses the viginere cipher to decrypt a string using a key
+	 * @param inputStringToDecrypt
+	 * @param key
+	 * @return
+	 */
+	protected String decrypt(String inputStringToDecrypt, String key) {
+		String decodedString = "";
+		char inputStringArray[] = inputStringToDecrypt.toCharArray();
+		int inputStringLength = inputStringToDecrypt.length();
+		char keyArray[] = key.toCharArray();
+		char newKeyArray[] = new char[inputStringLength];
+		
+	    for(int index = 0, secondIndex = 0; index < inputStringLength; index++, secondIndex++) {
+	    	if(secondIndex == key.length())
+	    		secondIndex = 0;
+	    	newKeyArray[index] = keyArray[secondIndex];
+	    }
+
+		
+		for (int inputIndex = 0, keyIndex = 0; inputIndex <= inputStringLength-1; inputIndex++) {
+			char currentChar = inputStringArray[inputIndex];
+			if (currentChar <= 'z' && currentChar >= 'a') {
+				decodedString += (char)((currentChar - Character.toLowerCase(newKeyArray[keyIndex]) + 26) % 26 + 'a');
+				keyIndex = keyIndex++ % key.length();
+				keyIndex++;
+			}
+			else if(currentChar <= 'Z' && currentChar >= 'A') {
+				decodedString += (char)((currentChar - Character.toUpperCase(newKeyArray[keyIndex]) + 26) % 26 + 'A');
+				keyIndex = keyIndex++ % key.length();
+				keyIndex++;
+			}
+			else
+				decodedString += currentChar;
+		}
+		return decodedString;
+	}
+}
+>>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
