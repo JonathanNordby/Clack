@@ -1,6 +1,11 @@
 package main;
 
+import java.io.IOException;
+import java.util.Scanner;
+
 import data.ClackData;
+import data.FileClackData;
+import data.MessageClackData;
 
 /**
  * The Client version of the Clack program
@@ -15,11 +20,14 @@ public class ClackClient {
 	private boolean closeConnection;
 	private ClackData dataToSendToServer, dataToReceiveFromServer;
 	private final static int DEFAULT_PORT = 7000;
+	private Scanner inFromStd;
+	private final String KEY = "Arma virumque cano";
+	
 	
 	public ClackClient(String userName, String hostName) {
 		this(userName, hostName, DEFAULT_PORT);
 	}
-	
+
 	public ClackClient(String userName) {
 		this(userName, "localhost", DEFAULT_PORT);
 	}
@@ -28,8 +36,10 @@ public class ClackClient {
 		this("anonymous", "localhost", DEFAULT_PORT);
 	}
 	
-	public ClackClient(String userName, String hostName, int port) {
-		
+	public ClackClient(String userName, String hostName, int port) {	
+		if (port < 1024) {
+			throw new IllegalArgumentException("Invalid port number!");
+		}
 		this.userName = userName;
 		this.hostName = hostName;
 		this.port = port;
@@ -37,10 +47,36 @@ public class ClackClient {
 	
 	public void start() {
 		//TODO Implement Later
+		inFromStd = new Scanner(System.in);
+		closeConnection = false;
+		do {
+			readClientData();
+			printData();
+		} while(!closeConnection);
+		
+		
+		
 	}
 	
 	public void readClientData() {
 		//TODO Implement Later
+		String input;
+		if (inFromStd.hasNext()) {
+			input = inFromStd.nextLine();
+			System.out.println(input);
+			if (input == "DONE") {
+				closeConnection = true;
+			} else if (input.startsWith("SENDFILE")) {
+				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1), ClackData.CONSTANT_SENDFILE);
+				if (dataToSendToServer instanceof FileClackData) {
+						((FileClackData) dataToSendToServer).writeFileContents(KEY);
+				}
+			} else if (input == "LISTUSERS") {
+				//NOTHING YET
+			} else {
+				dataToSendToServer = new MessageClackData(userName, input, KEY, ClackData.CONSTANT_SENDMESSAGE);
+			}
+		}
 	}
 	
 	public void sendData() {
@@ -52,7 +88,8 @@ public class ClackClient {
 	}
 	
 	public void printData() {
-		//TODO Implement Later
+		System.out.println(dataToSendToServer);
+		
 	}
 	
 	public String getUserName() {
