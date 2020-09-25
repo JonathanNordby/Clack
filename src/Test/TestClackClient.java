@@ -40,5 +40,7 @@ public class TestClackClient {
 		//checking hashcodes
 		System.out.println("Should be the same: " + testClient1.hashCode() + " " + testClientOther.hashCode());
 		System.out.println("Should be different: " + testClient1.hashCode() + " " + testClient2.hashCode());
+		
+		testClient2.start();
 	}
 }

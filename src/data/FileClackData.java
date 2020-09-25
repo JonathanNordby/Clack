@@ -57,7 +57,7 @@ public class FileClackData extends ClackData {
 	}
 	
 	/**
-	 * encrypt and return the file contents
+	 * decrypt and return the file contents
 	 */
 	public String getData(String key) {
 		return(super.decrypt(fileContents,key));
@@ -78,7 +78,7 @@ public class FileClackData extends ClackData {
 
 			String input;
 			while((input = inFromFile.readLine()) != EOF) {
-				result += input;
+				result += input + '\n';
 			}
 			
 		inFromFile.close();
@@ -105,7 +105,7 @@ public class FileClackData extends ClackData {
 			
 			String input;
 			while((input = inFromFile.readLine()) != EOF) {
-				unencryptedResult += input;
+				unencryptedResult += input + '\n';
 			}
 		
 			inFromFile.close();		
