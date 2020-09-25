@@ -98,21 +98,30 @@ abstract public class ClackData {
 	protected String encrypt(String inputStringToEncrypt, String key) {
 		String encodedString = "";
 	    char inputStringArray[] = inputStringToEncrypt.toCharArray();
+	    int inputStringLength = inputStringToEncrypt.length();
 	    char keyArray[] = key.toCharArray();
+	    char newKeyArray[] = new char[inputStringLength];
+	   
+	    for(int index = 0, secondIndex = 0; index < inputStringLength; index++, secondIndex++) {
+	    	if(secondIndex == key.length())
+	    		secondIndex = 0;
+	    	newKeyArray[index] = keyArray[secondIndex];
+	    	 }
 	        
-	    for (int inputIndex = 0, keyIndex = 0; inputIndex <= inputStringToEncrypt.length()-1; inputIndex++) {
+	    for (int inputIndex = 0, keyIndex = 0; inputIndex <= inputStringLength-1; inputIndex++) {
 	        char currentChar = inputStringArray[inputIndex];
             if (currentChar <= 'z' && currentChar  >= 'a') {
-	            encodedString += (char)((currentChar + keyArray[keyIndex] - (2*'a')) % 26 + 'a');
+	            encodedString += (char)((currentChar + Character.toLowerCase(newKeyArray[keyIndex]) - (2*'a')) % 26 + 'a');
 	            keyIndex = keyIndex++ % key.length();
+	            keyIndex++;
 	        }
             else if (currentChar <= 'Z' && currentChar  >= 'A') {
-	            encodedString += (char)((currentChar + keyArray[keyIndex] - (2*'A')) % 26 + 'A');
-	            keyIndex = keyIndex++ % key.length();
+	            encodedString += (char)((currentChar + Character.toUpperCase(newKeyArray[keyIndex]) - (2*'A')) % 26 + 'A');
+	            keyIndex = keyIndex++ % newKeyArray.length;
+	            keyIndex++;
             }
-            else if (currentChar == ' ') {
+            else
             	encodedString += currentChar;
-            }
         }
         return encodedString;
 	}
@@ -126,21 +135,31 @@ abstract public class ClackData {
 	protected String decrypt(String inputStringToDecrypt, String key) {
 		String decodedString = "";
 		char inputStringArray[] = inputStringToDecrypt.toCharArray();
+		int inputStringLength = inputStringToDecrypt.length();
 		char keyArray[] = key.toCharArray();
+		char newKeyArray[] = new char[inputStringLength];
 		
-		for (int inputIndex = 0, keyIndex = 0; inputIndex < inputStringToDecrypt.length(); inputIndex++) {
+	    for(int index = 0, secondIndex = 0; index < inputStringLength; index++, secondIndex++) {
+	    	if(secondIndex == key.length())
+	    		secondIndex = 0;
+	    	newKeyArray[index] = keyArray[secondIndex];
+	    }
+
+		
+		for (int inputIndex = 0, keyIndex = 0; inputIndex <= inputStringLength-1; inputIndex++) {
 			char currentChar = inputStringArray[inputIndex];
 			if (currentChar <= 'z' && currentChar >= 'a') {
-				decodedString += (char)((currentChar - keyArray[keyIndex] + 26) % 26 + 'a');
+				decodedString += (char)((currentChar - Character.toLowerCase(newKeyArray[keyIndex]) + 26) % 26 + 'a');
 				keyIndex = keyIndex++ % key.length();
+				keyIndex++;
 			}
 			else if(currentChar <= 'Z' && currentChar >= 'A') {
-				decodedString += (char)((currentChar - keyArray[keyIndex] + 26) % 26 + 'A');
+				decodedString += (char)((currentChar - Character.toUpperCase(newKeyArray[keyIndex]) + 26) % 26 + 'A');
 				keyIndex = keyIndex++ % key.length();
+				keyIndex++;
 			}
-			else if (currentChar == ' ') {
+			else
 				decodedString += currentChar;
-			}
 		}
 		return decodedString;
 	}

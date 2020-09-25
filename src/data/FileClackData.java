@@ -83,7 +83,7 @@ public class FileClackData extends ClackData {
 			
 		inFromFile.close();
 		}catch(FileNotFoundException fnf) {
-			System.err.println("File not found");
+			throw new IOException("File not found");
 		}catch (IOException ioe) {
 			System.err.println("issue with reading"); 
 		}
@@ -110,7 +110,7 @@ public class FileClackData extends ClackData {
 		
 			inFromFile.close();		
 		} catch(FileNotFoundException fnf) {
-			System.err.println("File not found");
+			throw new IOException("File not found");
 		} catch(IOException ioe) {
 			System.err.println("issue with reading");
 		}
@@ -129,9 +129,7 @@ public class FileClackData extends ClackData {
 			
 			writeToFile.println(fileContents);
 			writeToFile.close();
-			
-		}catch (FileNotFoundException fnfe) {
-			System.err.println("File not found");
+
 		}catch (IOException IOE) {
 			System.err.println("issue with reading");
 		}
@@ -148,11 +146,9 @@ public class FileClackData extends ClackData {
 			FileWriter fw = new FileWriter(file);
 			PrintWriter writeToFile = new PrintWriter(fw, true);
 			
-			writeToFile.println(super.encrypt(fileContents, key));
+			writeToFile.println(super.decrypt(fileContents, key));
 			writeToFile.close();
 			
-		}catch (FileNotFoundException fnfe) {
-			System.err.println("File not found");
 		}catch (IOException IOE) {
 			System.err.println("issue with reading");
 		}

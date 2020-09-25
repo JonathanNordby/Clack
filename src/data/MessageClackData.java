@@ -12,7 +12,7 @@ public class MessageClackData extends ClackData {
 	private String message;
 	
 	/**
-	 * constructor to set up the username, mesage, and type. Calls a constructor from its superclass ClackData
+	 * constructor to set up the username, message, and type. Calls a constructor from its superclass ClackData
 	 * @param userName
 	 * @param message
 	 * @param type
