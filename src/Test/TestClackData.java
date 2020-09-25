@@ -1,11 +1,7 @@
 package Test;
 import data.MessageClackData;
-<<<<<<< HEAD
-=======
 
 import java.io.IOException;
-
->>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
 import data.ClackData;
 import data.FileClackData;
 
@@ -16,11 +12,8 @@ import data.FileClackData;
  */
 
 public class TestClackData {
-<<<<<<< HEAD
-	public static void main(String args[]) {
-=======
+
 	public static void main(String args[]) throws IOException {
->>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
 		ClackData testMessageDefault = new MessageClackData();
 		ClackData testMessageDefault2 = new MessageClackData();
 		
@@ -161,15 +154,15 @@ public class TestClackData {
 		
 		//testing equals on the other file constructor, should return true, false, false, false
 		System.out.println("should be true: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther2));
-<<<<<<< HEAD
+
 		System.out.println("should be false: " + ((FileClackData) testFileOther).equals((FileClackData)testFileOther3));
 		System.out.println("should be false: " + ((FileClackData) testFileOther).equals((FileClackData)testFileOther4));
 		System.out.println("should be false: " + ((FileClackData) testFileOther).equals((FileClackData)testFileOther5));
-=======
+
 		System.out.println("should be false: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther3));
 		System.out.println("should be false: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther4));
 		System.out.println("should be false: " + ((FileClackData)testFileOther).equals((FileClackData)testFileOther5));
->>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
+
 		System.out.println();
 		
 		//testing  hashcode on the other file constructor, should be 2 of the same numbers followed by 3 unique numbers
@@ -184,8 +177,7 @@ public class TestClackData {
 		System.out.println(testFileOther.toString());
 		System.out.println();
 		
-<<<<<<< HEAD
-=======
+
 		
 		/*
 		 * 
@@ -220,7 +212,6 @@ public class TestClackData {
 		System.out.println(((FileClackData)testFileEncryption).getData());
 		((FileClackData)testFileEncryption).writeFileContents("TestKey"); //testing secure writes, check if Test.txt says "Test file content." If it does this also confirms that the unsecure file write works as well
 
->>>>>>> 36496c6576967125180e3f8edeb510e009bf82ba
 	}
 
 	 
