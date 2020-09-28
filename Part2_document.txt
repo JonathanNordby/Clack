@@ -5,3 +5,4 @@ A digital computer can usually be regarded as consisting of three parts:
 Needless to say it would not occur in the machine expressed in English. It would more likely be coded in a form such as 6809430217. 
 Here 17 says which of various possible operations [add] is to be performed on the two numbers. 
 ...It will be noticed that the instruction takes up 10 digits and so forms one packet of information...
+
