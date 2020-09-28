@@ -199,9 +199,9 @@ public class TestClackData {
 		
 		//this should return the unsecurely read line, followed by the same line after it has been read securely then decrypted by getData(String key), followed by the encrypted version of the data returned by getData()
 		/*expected output:
-		 * Test file content.
-		 * Test file content.
-		 * Mikm pmjx gggdilm
+		 * the file content as written
+		 * the file content as written
+		 * the file content encrypted
 		 */
 		ClackData testFileEncryption = new FileClackData("Stephen", "test.txt", 2);
 		((FileClackData)testFileEncryption).readFileContents(); //testing unsecure file reads
@@ -212,6 +212,18 @@ public class TestClackData {
 		System.out.println(((FileClackData)testFileEncryption).getData());
 		((FileClackData)testFileEncryption).writeFileContents("TestKey"); //testing secure writes, check if Test.txt says "Test file content." If it does this also confirms that the unsecure file write works as well
 
+		
+		/*
+		 * should do the same as the above block just with the file specified in the project assignment
+		 */
+		ClackData testDoc2 = new FileClackData("Stephen", "Part2_document.txt", 2);
+		((FileClackData)testDoc2).readFileContents(); 
+		((FileClackData)testDoc2).writeFileContents(); 
+		System.out.println(((FileClackData)testDoc2).getData()); 
+		((FileClackData)testDoc2).readFileContents("AnotherTestKey"); 
+		System.out.println(((FileClackData)testDoc2).getData("AnotherTestKey")); 
+		System.out.println(((FileClackData)testDoc2).getData());
+		((FileClackData)testDoc2).writeFileContents("AnotherTestKey"); 
 	}
 
 	 

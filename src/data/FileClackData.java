@@ -131,7 +131,7 @@ public class FileClackData extends ClackData {
 			writeToFile.close();
 
 		}catch (IOException IOE) {
-			System.err.println("issue with reading");
+			System.err.println("issue with writing");
 		}
 	}
 	
@@ -150,7 +150,7 @@ public class FileClackData extends ClackData {
 			writeToFile.close();
 			
 		}catch (IOException IOE) {
-			System.err.println("issue with reading");
+			System.err.println("issue with writing");
 		}
 	}
 	
