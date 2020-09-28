@@ -42,12 +42,15 @@ public class MessageClackData extends ClackData {
 	}
 	
 	/**
-	 * return the instant message
+	 * returns the message
 	 */
 	public String getData() {
 		return this.message;
 	}
 	
+	/**
+	 * decrypts and then returns the message
+	 */
 	public String getData(String key) {
 		return (super.decrypt(message, key));
 	}

@@ -78,10 +78,12 @@ abstract public class ClackData {
 		return this.date;
 	}
 		
-     /*
+     /**
 	 * returns the data contained in this class
+	 * @return
 	 */
 	abstract public String getData(); 
+	
 	/**
 	 * returns the data contained in this class, with the message or file contents encrypted
 	 * @param key
