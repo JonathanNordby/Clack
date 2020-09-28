@@ -132,6 +132,8 @@ public class FileClackData extends ClackData {
 
 		}catch (IOException IOE) {
 			System.err.println("issue with writing");
+		}catch (NullPointerException npe) {
+			System.err.println("unable to find the file requested");
 		}
 	}
 	
@@ -151,6 +153,8 @@ public class FileClackData extends ClackData {
 			
 		}catch (IOException IOE) {
 			System.err.println("issue with writing");
+		}catch (NullPointerException npe) {
+			System.err.println("unable to find the file requested");
 		}
 	}
 	
