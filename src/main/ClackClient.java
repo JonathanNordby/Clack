@@ -45,6 +45,9 @@ public class ClackClient {
 		this.port = port;
 	}
 	
+	/**
+	 * Initializes a Client
+	 */
 	public void start() {
 		//TODO Implement Later
 		inFromStd = new Scanner(System.in);
@@ -56,14 +59,17 @@ public class ClackClient {
 		inFromStd.close();
 	}
 	
+	/**
+	 * Reads in data provided in standard input
+	 */
 	public void readClientData() {
 		//TODO Implement Later
 		String input;
 		if (inFromStd.hasNext()) {
 			input = inFromStd.nextLine();
-//			System.out.println(input);
-			if (input == "DONE") {
+			if (input.startsWith("DONE")) {
 				closeConnection = true;
+				dataToSendToServer = new MessageClackData(userName, "DONE", KEY, ClackData.CONSTANT_SENDMESSAGE);
 			} else if (input.startsWith("SENDFILE")) {
 				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1), ClackData.CONSTANT_SENDFILE);
 				if (dataToSendToServer instanceof FileClackData) {
@@ -90,7 +96,9 @@ public class ClackClient {
 	public void receiveData() {
 		//TODO Implement Later
 	}
-	
+	/**
+	 * Prints out the data that is to be sent to the server
+	 */
 	public void printData() {
 		System.out.println(dataToSendToServer.getData(KEY));
 	}
