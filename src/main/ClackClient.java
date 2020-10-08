@@ -1,6 +1,11 @@
 package main;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import data.ClackData;
@@ -22,6 +27,8 @@ public class ClackClient {
 	private final static int DEFAULT_PORT = 7000;
 	private Scanner inFromStd;
 	private final String KEY = "Armavirumquecano";
+	private ObjectInputStream inFromServer;
+	private ObjectOutputStream outToServer;
 	
 	
 	public ClackClient(String userName, String hostName) {
@@ -43,20 +50,34 @@ public class ClackClient {
 		this.userName = userName;
 		this.hostName = hostName;
 		this.port = port;
+		inFromServer = null;
+		outToServer = null;
 	}
 	
 	/**
 	 * Initializes a Client
 	 */
 	public void start() {
-		//TODO Implement Later
-		inFromStd = new Scanner(System.in);
-		closeConnection = false;
-		do {
-			readClientData();
-			printData();
-		} while(!closeConnection);
-		inFromStd.close();
+		try {
+			Socket connection = new Socket("127.0.0.1", port);
+			outToServer = new ObjectOutputStream(connection.getOutputStream());
+			inFromServer = new ObjectInputStream(connection.getInputStream());
+			inFromStd = new Scanner(System.in);
+			closeConnection = false;
+			do {
+				readClientData();
+				printData();
+			} while(!closeConnection);
+			inFromStd.close();
+			connection.close();
+		} catch (UnknownHostException e) {
+			System.err.println("Cannot resolve IP Address");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("I/O Error occured");
+			e.printStackTrace();
+		}
+
 	}
 	
 	/**
@@ -76,7 +97,7 @@ public class ClackClient {
 						try {
 							((FileClackData) dataToSendToServer).readFileContents(KEY);
 						} catch (IOException e) {
-							System.err.println("Error: unable to read file.DON");
+							System.err.println("Error: unable to read file.");
 						}
 						((FileClackData) dataToSendToServer).writeFileContents(KEY);
 				}
@@ -90,11 +111,24 @@ public class ClackClient {
 	}
 	
 	public void sendData() {
-		//TODO Implement Later
+		try {
+			outToServer.writeObject(dataToSendToServer);
+		} catch (IOException e) {
+			System.err.println("Cannot Write Object");
+			e.printStackTrace();
+		}
 	}
 	
 	public void receiveData() {
-		//TODO Implement Later
+		try {
+			dataToReceiveFromServer = (ClackData) inFromServer.readObject();
+		} catch (ClassNotFoundException e) {
+			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("Problem reading data from server");
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * Prints out the data that is to be sent to the server

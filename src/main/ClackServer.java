@@ -1,5 +1,11 @@
 package main;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import data.ClackData;
 
 /**
@@ -8,11 +14,13 @@ import data.ClackData;
  *
  */
 public class ClackServer {
-	
+
 	private int port;
 	private boolean closeConnection;
 	ClackData dataToReceiveFromClient;
 	ClackData dataToSendToClient;
+	ObjectInputStream inFromClient;
+	ObjectOutputStream outToClient;
 	private final static int DEFAULT_PORT = 7000;
 	
 	/**
@@ -23,6 +31,8 @@ public class ClackServer {
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
+		inFromClient = null;
+		outToClient = null;
 	}
 	/**
 	 * creates a Clack Server with a default port of 7000
@@ -35,15 +45,50 @@ public class ClackServer {
 	 * TODO
 	 */
 	public void start() {
-		//TODO Implement
+		try {
+			ServerSocket server = new ServerSocket(port);
+			Socket client = server.accept();
+			outToClient = new ObjectOutputStream(client.getOutputStream());
+			inFromClient = new ObjectInputStream(client.getInputStream());
+			closeConnection = false;
+			do {
+				receiveData();
+				sendData();
+			}while(!closeConnection);
+			
+			client.close();
+			server.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendData() {
+		try {
+			outToClient.writeObject(dataToSendToClient);
+		} catch (IOException e) {
+			System.err.println("Error in I/O");
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * TODO
 	 */
 	public void receiveData() {
-		//TODO Implement Function
+		try {
+			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
+		} catch (ClassNotFoundException e) {
+			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+	
+
 	
 	/**
 	 * @return the port number as an int
@@ -105,6 +150,6 @@ public class ClackServer {
 	@Override
 	public String toString() {
 		return "Server: " + port + " " + closeConnection + " " + (dataToReceiveFromClient == null ? "null" : dataToReceiveFromClient.toString()) + " " + (dataToSendToClient == null ? "null" : dataToSendToClient.toString());
-		
+
 	}
 }
