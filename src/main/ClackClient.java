@@ -1,8 +1,10 @@
 package main;
 
 import java.io.IOException;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -10,6 +12,7 @@ import java.util.Scanner;
 import data.ClackData;
 import data.FileClackData;
 import data.MessageClackData;
+
 
 /**
  * The Client version of the Clack program
@@ -74,6 +77,8 @@ public class ClackClient {
 		} catch (UnknownHostException e) {
 			System.err.println("Cannot resolve IP Address");
 			e.printStackTrace();
+		} catch (ConnectException ce) {
+			System.err.println("Could not connect to the server.");
 		} catch (IOException e) {
 			System.err.println("I/O Error occured");
 			e.printStackTrace();
@@ -85,7 +90,6 @@ public class ClackClient {
 	 * Reads in data provided in standard input
 	 */
 	public void readClientData() {
-		// TODO Implement Later
 		String input;
 		if (inFromStd.hasNext()) {
 			input = inFromStd.nextLine();
@@ -210,7 +214,10 @@ public class ClackClient {
 		if (args.length >= 1) {
 			String[] arguments = args[0].split("(@|:)");
 			try {
-				if (arguments.length == 1) {
+				if (arguments.length == 0) {
+					client = new ClackClient();
+					client.start();
+				} else if (arguments.length == 1) {
 					client = new ClackClient(arguments[0]);
 					client.start();
 				} else if (arguments.length == 2) {
@@ -220,13 +227,18 @@ public class ClackClient {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
 					client.start();
 				}
+				else {
+					throw new IllegalArgumentException();
+				}
 			} catch (NumberFormatException nfe) {
 				System.err.println("NumberFormatException invalid port number format");
+			} catch (IllegalArgumentException iae) {
+				System.err.println("IllegalArgumentException invalid number of arguments");
 			}
-		} else {
+		} /*else {
 			client = new ClackClient();
 			client.start();
-		}
+		}*/
 		
 
 		
