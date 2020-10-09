@@ -74,10 +74,9 @@ public class ClackServer {
 		}
 	}
 
-	public synchronized void sendData() {
+	public void sendData() {
 		try {
 				outToClient.writeObject(dataToSendToClient);
-				obj.notify();
 		} catch (IOException e) {
 			System.err.println("Error in I/O");
 			e.printStackTrace();
@@ -87,13 +86,10 @@ public class ClackServer {
 	/**
 	 * TODO
 	 */
-	public synchronized void receiveData() throws IOException,SocketException {
+	public void receiveData() throws IOException {
 		try {
-			if (inFromClient.available() > 0) {
 				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
 				System.out.println("Server: " + dataToReceiveFromClient);
-				obj.notify();
-			}
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
 			e.printStackTrace();
