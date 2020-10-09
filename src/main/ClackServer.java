@@ -87,13 +87,13 @@ public class ClackServer {
 	}
 
 	/**
-	 * receives data from the client.
+	 * TODO
 	 */
 	public void receiveData() throws IOException {
 		try {
 				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-				if(dataToReceiveFromClient.getData() == "DONE")
-					closeConnection = false;
+				if(dataToReceiveFromClient.getData() == "DONE");
+					closeConnection = true;
 				System.out.println(dataToReceiveFromClient);
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");

@@ -218,10 +218,7 @@ public class ClackClient {
 		if (args.length >= 1) {
 			String[] arguments = args[0].split("(@|:)");
 			try {
-				if (arguments.length == 0) {
-					client = new ClackClient();
-					client.start();
-				} else if (arguments.length == 1) {
+				if (arguments.length == 1) {
 					client = new ClackClient(arguments[0]);
 					client.start();
 				} else if (arguments.length == 2) {
@@ -231,14 +228,15 @@ public class ClackClient {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
 					client.start();
 				}
-				else {
-					throw new IllegalArgumentException();
-				}
 			} catch (NumberFormatException nfe) {
 				System.err.println("NumberFormatException invalid port number format");
 			} catch (IllegalArgumentException iae) {
 				System.err.println("IllegalArgumentException invalid number of arguments");
 			}
-		} 
+		} else {
+			client = new ClackClient();
+			client.start();
+		}
+
 	}
 }
