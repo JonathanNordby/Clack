@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 import data.ClackData;
 
@@ -151,5 +152,29 @@ public class ClackServer {
 	public String toString() {
 		return "Server: " + port + " " + closeConnection + " " + (dataToReceiveFromClient == null ? "null" : dataToReceiveFromClient.toString()) + " " + (dataToSendToClient == null ? "null" : dataToSendToClient.toString());
 
+	}
+	
+	public static void main(String args[])
+	{
+		try {
+			Scanner inFromStd = new Scanner(System.in);
+			String input;
+			input = inFromStd.nextLine();
+			if(input.equals("java ClackServer")){
+				ClackServer testServer = new ClackServer();
+				testServer.start();
+			}
+			else if(input.startsWith("java ClackServer")){
+				int inputPortNum = Integer.parseInt(input.substring("java ClackServer".length()+1));
+				ClackServer testServer2 = new ClackServer(inputPortNum);
+				testServer2.start();
+			}
+			else
+				System.out.println("Invalid Command");
+			
+			inFromStd.close();
+		}catch (NumberFormatException nfe) {
+			System.err.println("NumberFormatException invalid port number format");
+		}
 	}
 }

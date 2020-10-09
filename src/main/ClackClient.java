@@ -1,6 +1,8 @@
 package main;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -76,7 +78,7 @@ public class ClackClient {
 		} catch (IOException e) {
 			System.err.println("I/O Error occured");
 			e.printStackTrace();
-		}
+		} 
 
 	}
 	
@@ -207,5 +209,42 @@ public class ClackClient {
 	@Override
 	public String toString() {
 		return "Client: " +  + port + " " + userName + " " + hostName + " " + closeConnection + " " + dataToReceiveFromServer.toString() + " " + dataToSendToServer.toString();
+	}
+	
+	public static void main(String args[]) {
+	    try {
+	    	String input;
+	    	Scanner inFromStd2 = new Scanner(System.in);
+	    	input = inFromStd2.nextLine();
+	    	if(input.equals("java ClackClient")) {
+	    		ClackClient test = new ClackClient("Anon");
+	    		test.start();
+	    	}
+	    	else if(input.startsWith("java ClackClient") && !input.contains("@")) {
+	    		String inputUserName = input.substring("java ClackClient".length() + 1);
+	    		ClackClient test2 = new ClackClient(inputUserName);
+	    		test2.start();
+	    	}
+	    	else if(input.startsWith("java ClackClient") && input.contains("@") && !input.contains(":")) {
+	    		String inputUserName = input.substring(("java ClackClient".length()+1), input.indexOf('@'));
+	    		String inputHostName = input.substring(input.indexOf('@')+1);
+	    		ClackClient test3 = new ClackClient(inputUserName, inputHostName);
+	    		test3.start();
+	    	}
+	    	else if (input.startsWith("java ClackClient") && input.contains("@") && input.contains(":")) {
+	    		String inputUserName = input.substring(("java ClackClient".length()+1), input.indexOf('@'));
+	    		String inputHostName = input.substring(input.indexOf('@')+1, input.indexOf(':'));
+	    		int inputPortNum = Integer.parseInt(input.substring(input.indexOf(':')+1));
+	    		ClackClient test4 = new ClackClient(inputUserName, inputHostName, inputPortNum);
+	    		test4.start();
+	    	}
+	    	else
+	    		System.out.println("Invalid command");
+
+	    	inFromStd2.close();
+	    	}catch (NumberFormatException nfe) {
+	    		System.err.println("NumberFormatException invalid port number format");
+	    	}
+	    
 	}
 }
