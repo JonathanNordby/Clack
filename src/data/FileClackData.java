@@ -9,6 +9,10 @@ import java.io.*;
 
 public class FileClackData extends ClackData {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7301103176869797878L;
+	/**
 	 * file name and contents
 	 */
 	private String fileName; 
@@ -131,9 +135,7 @@ public class FileClackData extends ClackData {
 			writeToFile.close();
 
 		}catch (IOException IOE) {
-			System.err.println("issue with writing");
-		}catch (NullPointerException npe) {
-			System.err.println("unable to find the file requested");
+			System.err.println("issue with reading");
 		}
 	}
 	
@@ -152,9 +154,7 @@ public class FileClackData extends ClackData {
 			writeToFile.close();
 			
 		}catch (IOException IOE) {
-			System.err.println("issue with writing");
-		}catch (NullPointerException npe) {
-			System.err.println("unable to find the file requested");
+			System.err.println("issue with reading");
 		}
 	}
 	

@@ -9,6 +9,10 @@ package data;
 
 public class MessageClackData extends ClackData {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1651367070602801488L;
 	private String message;
 	
 	/**
@@ -42,15 +46,12 @@ public class MessageClackData extends ClackData {
 	}
 	
 	/**
-	 * returns the message
+	 * return the instant message
 	 */
 	public String getData() {
 		return this.message;
 	}
 	
-	/**
-	 * decrypts and then returns the message
-	 */
 	public String getData(String key) {
 		return (super.decrypt(message, key));
 	}

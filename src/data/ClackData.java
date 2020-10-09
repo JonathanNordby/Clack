@@ -1,7 +1,6 @@
-
-
 package data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +10,11 @@ import java.util.Date;
  *
  */
 
-abstract public class ClackData {
+abstract public class ClackData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1958429530860788735L;
 	/**
 	 * constants for the different types
 	 */
@@ -78,12 +81,10 @@ abstract public class ClackData {
 		return this.date;
 	}
 		
-     /**
+     /*
 	 * returns the data contained in this class
-	 * @return
 	 */
 	abstract public String getData(); 
-	
 	/**
 	 * returns the data contained in this class, with the message or file contents encrypted
 	 * @param key
