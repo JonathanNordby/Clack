@@ -1,7 +1,6 @@
 package main;
 
 import java.io.IOException;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
@@ -12,7 +11,6 @@ import java.util.Scanner;
 import data.ClackData;
 import data.FileClackData;
 import data.MessageClackData;
-
 
 /**
  * The Client version of the Clack program
@@ -141,7 +139,9 @@ public class ClackClient {
 	 * Prints out the data that is to be sent to the server
 	 */
 	public void printData() {
-		System.out.println(dataToReceiveFromServer.getData(KEY));
+		if (!closeConnection) {
+			System.out.println(dataToReceiveFromServer.getData(KEY));
+		}
 	}
 
 	public String getUserName() {
@@ -210,7 +210,9 @@ public class ClackClient {
 	}
 
 	/**
-	 * Main method, takes in user input from the command line and initializes the client accordingly.
+	 * Main method, takes in user input from the command line and initializes the
+	 * client accordingly.
+	 * 
 	 * @param args
 	 */
 	public static void main(String args[]) {
@@ -224,7 +226,7 @@ public class ClackClient {
 				} else if (arguments.length == 2) {
 					client = new ClackClient(arguments[0], arguments[1]);
 					client.start();
-				} else if (arguments.length == 3){
+				} else if (arguments.length == 3) {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
 					client.start();
 				}

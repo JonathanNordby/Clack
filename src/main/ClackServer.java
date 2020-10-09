@@ -1,12 +1,11 @@
 package main;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.Scanner;
 
 import data.ClackData;
 
@@ -23,7 +22,6 @@ public class ClackServer {
 	ClackData dataToSendToClient;
 	ObjectInputStream inFromClient;
 	ObjectOutputStream outToClient;
-	private Object obj;
 	private final static int DEFAULT_PORT = 7000;
 
 	/**
@@ -34,7 +32,6 @@ public class ClackServer {
 		if (port < 1024) {
 			throw new IllegalArgumentException();
 		}
-		obj = new Object();
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
@@ -89,14 +86,18 @@ public class ClackServer {
 	/**
 	 * TODO
 	 */
-	public void receiveData() throws IOException {
+	public void receiveData() {
 		try {
 				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
 				if(dataToReceiveFromClient.getData() == "DONE")
 					closeConnection = true;
 				System.out.println(dataToReceiveFromClient);
+		} catch (EOFException e) {
+			closeConnection = true;
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
