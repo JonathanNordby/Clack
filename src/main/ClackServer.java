@@ -92,7 +92,7 @@ public class ClackServer {
 	public void receiveData() throws IOException {
 		try {
 				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-				if(dataToReceiveFromClient.getData() == "DONE");
+				if(dataToReceiveFromClient.getData() == "DONE")
 					closeConnection = true;
 				System.out.println(dataToReceiveFromClient);
 		} catch (ClassNotFoundException e) {
