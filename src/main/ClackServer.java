@@ -49,7 +49,7 @@ public class ClackServer {
 	}
 
 	/**
-	 * TODO
+	 * starts up the server
 	 */
 	public void start() {
 		try {
@@ -74,6 +74,9 @@ public class ClackServer {
 		}
 	}
 
+	/**
+	 * sends the data to the client
+	 */
 	public void sendData() {
 		try {
 				outToClient.writeObject(dataToSendToClient);
@@ -84,12 +87,14 @@ public class ClackServer {
 	}
 
 	/**
-	 * TODO
+	 * receives data from the client.
 	 */
 	public void receiveData() throws IOException {
 		try {
 				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-				System.out.println("Server: " + dataToReceiveFromClient);
+				if(dataToReceiveFromClient.getData() == "DONE")
+					closeConnection = false;
+				System.out.println(dataToReceiveFromClient);
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
 			e.printStackTrace();
@@ -161,6 +166,10 @@ public class ClackServer {
 
 	}
 
+	/**
+	 * main method for server, takes arguments from the command line and initializes the server accordingly.
+	 * @param args
+	 */
 	public static void main(String args[])
 	{
 		try {
@@ -180,23 +189,5 @@ public class ClackServer {
 		}catch (NumberFormatException nfe) {
 			System.err.println("NumberFormatException invalid port number format");
 		}
-
-		//			Scanner inFromStd = new Scanner(System.in);
-		//			String input;
-		//			input = inFromStd.nextLine();
-		//			if(input.equals("java ClackServer")){
-		//				ClackServer testServer = new ClackServer();
-		//				testServer.start();
-		//			}
-		//			else if(input.startsWith("java ClackServer")){
-		//				int inputPortNum = Integer.parseInt(input.substring("java ClackServer".length()+1));
-		//				ClackServer testServer2 = new ClackServer(inputPortNum);
-		//				testServer2.start();
-		//			}
-		//			else
-		//				System.out.println("Invalid Command");
-		//			
-		//			inFromStd.close();
-
 	}
 }

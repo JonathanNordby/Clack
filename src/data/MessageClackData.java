@@ -52,6 +52,9 @@ public class MessageClackData extends ClackData {
 		return this.message;
 	}
 	
+	/**
+	 * return the instant message but decrypted
+	 */
 	public String getData(String key) {
 		return (super.decrypt(message, key));
 	}

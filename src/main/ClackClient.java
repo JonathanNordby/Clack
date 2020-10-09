@@ -95,7 +95,7 @@ public class ClackClient {
 			input = inFromStd.nextLine();
 			if (input.startsWith("DONE")) {
 				closeConnection = true;
-				dataToSendToServer = new MessageClackData(userName, "DONE", KEY, ClackData.CONSTANT_SENDMESSAGE);
+				dataToSendToServer = new MessageClackData(userName, "DONE", ClackData.CONSTANT_SENDMESSAGE);
 			} else if (input.startsWith("SENDFILE")) {
 				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1),
 						ClackData.CONSTANT_SENDFILE);
@@ -209,6 +209,10 @@ public class ClackClient {
 				+ dataToReceiveFromServer.toString() + " " + dataToSendToServer.toString();
 	}
 
+	/**
+	 * Main method, takes in user input from the command line and initializes the client accordingly.
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		ClackClient client;
 		if (args.length >= 1) {
@@ -235,44 +239,6 @@ public class ClackClient {
 			} catch (IllegalArgumentException iae) {
 				System.err.println("IllegalArgumentException invalid number of arguments");
 			}
-		} /*else {
-			client = new ClackClient();
-			client.start();
-		}*/
-		
-
-		
-			
-			
-			
-			
-			
-//			String input;
-//			Scanner inFromStd2 = new Scanner(System.in);
-//			input = inFromStd2.nextLine();
-//			if (input.equals("java ClackClient")) {
-//				ClackClient test = new ClackClient("Anon");
-//				test.start();
-//			} else if (input.startsWith("java ClackClient") && !input.contains("@")) {
-//				String inputUserName = input.substring("java ClackClient".length() + 1);
-//				ClackClient test2 = new ClackClient(inputUserName);
-//				test2.start();
-//			} else if (input.startsWith("java ClackClient") && input.contains("@") && !input.contains(":")) {
-//				String inputUserName = input.substring(("java ClackClient".length() + 1), input.indexOf('@'));
-//				String inputHostName = input.substring(input.indexOf('@') + 1);
-//				ClackClient test3 = new ClackClient(inputUserName, inputHostName);
-//				test3.start();
-//			} else if (input.startsWith("java ClackClient") && input.contains("@") && input.contains(":")) {
-//				String inputUserName = input.substring(("java ClackClient".length() + 1), input.indexOf('@'));
-//				String inputHostName = input.substring(input.indexOf('@') + 1, input.indexOf(':'));
-//				int inputPortNum = Integer.parseInt(input.substring(input.indexOf(':') + 1));
-//				ClackClient test4 = new ClackClient(inputUserName, inputHostName, inputPortNum);
-//				test4.start();
-//			} else
-//				System.out.println("Invalid command");
-//
-//			inFromStd2.close();
-
-
+		} 
 	}
 }
