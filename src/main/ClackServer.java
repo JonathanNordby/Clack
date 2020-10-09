@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+
 
 import data.ClackData;
 
@@ -23,12 +23,15 @@ public class ClackServer {
 	ObjectInputStream inFromClient;
 	ObjectOutputStream outToClient;
 	private final static int DEFAULT_PORT = 7000;
-	
+
 	/**
 	 * Creates an instance of the Clack Server with the specified port
 	 * @param port the number of the port
 	 */
 	public ClackServer(int port) {
+		if (port < 1024) {
+			throw new IllegalArgumentException();
+		}
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
@@ -41,7 +44,7 @@ public class ClackServer {
 	public ClackServer() {
 		this(DEFAULT_PORT);
 	}
-	
+
 	/**
 	 * TODO
 	 */
@@ -56,7 +59,7 @@ public class ClackServer {
 				receiveData();
 				sendData();
 			}while(!closeConnection);
-			
+
 			client.close();
 			server.close();
 		} catch (IOException e) {
@@ -64,7 +67,7 @@ public class ClackServer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void sendData() {
 		try {
 			outToClient.writeObject(dataToSendToClient);
@@ -73,7 +76,7 @@ public class ClackServer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * TODO
 	 */
@@ -84,20 +87,20 @@ public class ClackServer {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Server I/O Error");
 			e.printStackTrace();
 		}
 	}
-	
 
-	
+
+
 	/**
 	 * @return the port number as an int
 	 */
 	public int getPort() {
 		return port;
 	}
-	
+
 	/**
 	 * @return a hashcode of the object that follows the general contract
 	 */
@@ -110,7 +113,7 @@ public class ClackServer {
 		result = 37 * result + (dataToSendToClient == null ? 0 : dataToSendToClient.hashCode());
 		return result;
 	}
-	
+
 	/**
 	 * @return true or false depending on if the objects are equal
 	 */
@@ -123,23 +126,23 @@ public class ClackServer {
 		if (dataToSendToClient == null && otherClackServer.dataToSendToClient == null) {
 			if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
 				return port == otherClackServer.port &&
-					   closeConnection == otherClackServer.closeConnection;
+						closeConnection == otherClackServer.closeConnection;
 			} else {
 				return port == otherClackServer.port &&
-					   closeConnection == otherClackServer.closeConnection &&
-					   dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);				
+						closeConnection == otherClackServer.closeConnection &&
+						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);				
 			}
 		} else if (dataToSendToClient != null && otherClackServer.dataToSendToClient != null) {
 			if (dataToReceiveFromClient != null && otherClackServer.dataToReceiveFromClient != null) {
 				return port == otherClackServer.port &&
-					   closeConnection == otherClackServer.closeConnection &&
-					   dataToSendToClient.equals(otherClackServer.dataToSendToClient) && 
-					   dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
+						closeConnection == otherClackServer.closeConnection &&
+						dataToSendToClient.equals(otherClackServer.dataToSendToClient) && 
+						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
 			} else {
 				if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
 					return port == otherClackServer.port &&
-						   closeConnection == otherClackServer.closeConnection &&
-					       dataToSendToClient.equals(otherClackServer.dataToSendToClient);
+							closeConnection == otherClackServer.closeConnection &&
+							dataToSendToClient.equals(otherClackServer.dataToSendToClient);
 				}
 				return false;
 			}
@@ -147,34 +150,49 @@ public class ClackServer {
 			return false;
 		}	
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Server: " + port + " " + closeConnection + " " + (dataToReceiveFromClient == null ? "null" : dataToReceiveFromClient.toString()) + " " + (dataToSendToClient == null ? "null" : dataToSendToClient.toString());
 
 	}
-	
+
 	public static void main(String args[])
 	{
 		try {
-			Scanner inFromStd = new Scanner(System.in);
-			String input;
-			input = inFromStd.nextLine();
-			if(input.equals("java ClackServer")){
-				ClackServer testServer = new ClackServer();
-				testServer.start();
+			ClackServer server;
+			switch (args.length) {
+			case 0:
+				server = new ClackServer();
+				server.start();
+				break;
+			case 1:
+				server = new ClackServer(Integer.parseInt(args[0]));
+				server.start();
+				break;
+			default:
+				System.err.println("Improper arguments");
 			}
-			else if(input.startsWith("java ClackServer")){
-				int inputPortNum = Integer.parseInt(input.substring("java ClackServer".length()+1));
-				ClackServer testServer2 = new ClackServer(inputPortNum);
-				testServer2.start();
-			}
-			else
-				System.out.println("Invalid Command");
-			
-			inFromStd.close();
 		}catch (NumberFormatException nfe) {
 			System.err.println("NumberFormatException invalid port number format");
 		}
+
+		//			Scanner inFromStd = new Scanner(System.in);
+		//			String input;
+		//			input = inFromStd.nextLine();
+		//			if(input.equals("java ClackServer")){
+		//				ClackServer testServer = new ClackServer();
+		//				testServer.start();
+		//			}
+		//			else if(input.startsWith("java ClackServer")){
+		//				int inputPortNum = Integer.parseInt(input.substring("java ClackServer".length()+1));
+		//				ClackServer testServer2 = new ClackServer(inputPortNum);
+		//				testServer2.start();
+		//			}
+		//			else
+		//				System.out.println("Invalid Command");
+		//			
+		//			inFromStd.close();
+
 	}
 }
