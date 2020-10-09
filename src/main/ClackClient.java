@@ -65,6 +65,8 @@ public class ClackClient {
 			closeConnection = false;
 			do {
 				readClientData();
+				sendData();
+				receiveData();
 				printData();
 			} while (!closeConnection);
 			inFromStd.close();
@@ -135,7 +137,7 @@ public class ClackClient {
 	 * Prints out the data that is to be sent to the server
 	 */
 	public void printData() {
-		System.out.println(dataToSendToServer.getData(KEY));
+		System.out.println(dataToReceiveFromServer.getData(KEY));
 	}
 
 	public String getUserName() {

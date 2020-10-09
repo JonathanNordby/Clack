@@ -5,7 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+import java.net.SocketException;
+import java.util.Scanner;
 
 import data.ClackData;
 
@@ -22,6 +23,7 @@ public class ClackServer {
 	ClackData dataToSendToClient;
 	ObjectInputStream inFromClient;
 	ObjectOutputStream outToClient;
+	private Object obj;
 	private final static int DEFAULT_PORT = 7000;
 
 	/**
@@ -32,6 +34,7 @@ public class ClackServer {
 		if (port < 1024) {
 			throw new IllegalArgumentException();
 		}
+		obj = new Object();
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
@@ -52,25 +55,29 @@ public class ClackServer {
 		try {
 			ServerSocket server = new ServerSocket(port);
 			Socket client = server.accept();
+			System.out.println(client.getInetAddress());
 			outToClient = new ObjectOutputStream(client.getOutputStream());
 			inFromClient = new ObjectInputStream(client.getInputStream());
 			closeConnection = false;
 			do {
-				receiveData();
-				sendData();
+				//if (inFromClient.available() > 0) {
+					receiveData();
+					dataToSendToClient = dataToReceiveFromClient;
+					sendData();
+				//}
 			}while(!closeConnection);
 
 			client.close();
 			server.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void sendData() {
+	public synchronized void sendData() {
 		try {
-			outToClient.writeObject(dataToSendToClient);
+				outToClient.writeObject(dataToSendToClient);
+				obj.notify();
 		} catch (IOException e) {
 			System.err.println("Error in I/O");
 			e.printStackTrace();
@@ -80,14 +87,15 @@ public class ClackServer {
 	/**
 	 * TODO
 	 */
-	public void receiveData() {
+	public synchronized void receiveData() throws IOException,SocketException {
 		try {
-			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
+			if (inFromClient.available() > 0) {
+				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
+				System.out.println("Server: " + dataToReceiveFromClient);
+				obj.notify();
+			}
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("Server I/O Error");
 			e.printStackTrace();
 		}
 	}
