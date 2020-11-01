@@ -1,5 +1,10 @@
 package main;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
 import data.ClackData;
 
 /**
@@ -13,16 +18,24 @@ public class ClackServer {
 	private boolean closeConnection;
 	ClackData dataToReceiveFromClient;
 	ClackData dataToSendToClient;
+//	ObjectInputStream inFromClient;
+//	ObjectOutputStream outToClient;
+	ArrayList<ServerSideClientIO> ServerSideIOList;
 	private final static int DEFAULT_PORT = 7000;
-	
+
 	/**
 	 * Creates an instance of the Clack Server with the specified port
 	 * @param port the number of the port
 	 */
 	public ClackServer(int port) {
+		if (port < 1024) {
+			throw new IllegalArgumentException();
+		}
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
+//		inFromClient = null;
+//		outToClient = null;
 	}
 	/**
 	 * creates a Clack Server with a default port of 7000
@@ -30,28 +43,86 @@ public class ClackServer {
 	public ClackServer() {
 		this(DEFAULT_PORT);
 	}
-	
+
 	/**
-	 * TODO
+	 * starts up the server
 	 */
 	public void start() {
-		//TODO Implement
+		try {
+			ServerSocket server = new ServerSocket(port);
+			//Socket client = server.accept();
+			//System.out.println(client.getInetAddress());
+			//outToClient = new ObjectOutputStream(client.getOutputStream());
+			//inFromClient = new ObjectInputStream(client.getInputStream());
+			closeConnection = false;
+			while (!closeConnection) {
+				Socket client = server.accept();
+				ServerSideClientIO IOThing = new ServerSideClientIO(this, client);
+				System.out.println(this);
+				ServerSideIOList.add(IOThing);
+				Thread serverThread = new Thread(IOThing);
+				serverThread.start();
+			}
+//			client.close();
+			server.close();
+		} catch (IOException e) {
+			System.err.println("Error opening a connection");
+			e.printStackTrace();
+		}
 	}
-	
+
+	/**
+	 * sends the data to the client
+	 */
+//	public void sendData() {
+//		try {
+//				outToClient.writeObject(dataToSendToClient);
+//		} catch (IOException e) {
+//			System.err.println("Error in I/O");
+//			e.printStackTrace();
+//		}
+//	}
+
 	/**
 	 * TODO
 	 */
-	public void receiveData() {
-		//TODO Implement Function
+//	public void receiveData() {
+//		try {
+//				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
+//				if(dataToReceiveFromClient.getData() == "DONE")
+//					closeConnection = true;
+//				System.out.println(dataToReceiveFromClient);
+//		} catch (EOFException e) {
+//			closeConnection = true;
+//		} catch (ClassNotFoundException e) {
+//			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
+	public synchronized void broadcast(ClackData objectToBroadcastToClients) {
+		
+		for (ServerSideClientIO client : ServerSideIOList) {
+			client.setDataToSendToClient(objectToBroadcastToClients);
+			client.sendData();
+		}
 	}
 	
+	public synchronized void remove(ServerSideClientIO serverSideClientToRemove) {
+		ServerSideIOList.remove(serverSideClientToRemove);
+	}
+
+
+
 	/**
 	 * @return the port number as an int
 	 */
 	public int getPort() {
 		return port;
 	}
-	
+
 	/**
 	 * @return a hashcode of the object that follows the general contract
 	 */
@@ -64,7 +135,7 @@ public class ClackServer {
 		result = 37 * result + (dataToSendToClient == null ? 0 : dataToSendToClient.hashCode());
 		return result;
 	}
-	
+
 	/**
 	 * @return true or false depending on if the objects are equal
 	 */
@@ -74,14 +145,62 @@ public class ClackServer {
 			return false;
 		}
 		ClackServer otherClackServer = (ClackServer) other;
-		return  port == otherClackServer.port && 
-				closeConnection == otherClackServer.closeConnection &&
-				dataToReceiveFromClient == otherClackServer.dataToReceiveFromClient &&
-				dataToSendToClient == otherClackServer.dataToSendToClient;
+		if (dataToSendToClient == null && otherClackServer.dataToSendToClient == null) {
+			if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
+				return port == otherClackServer.port &&
+						closeConnection == otherClackServer.closeConnection;
+			} else {
+				return port == otherClackServer.port &&
+						closeConnection == otherClackServer.closeConnection &&
+						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);				
+			}
+		} else if (dataToSendToClient != null && otherClackServer.dataToSendToClient != null) {
+			if (dataToReceiveFromClient != null && otherClackServer.dataToReceiveFromClient != null) {
+				return port == otherClackServer.port &&
+						closeConnection == otherClackServer.closeConnection &&
+						dataToSendToClient.equals(otherClackServer.dataToSendToClient) && 
+						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
+			} else {
+				if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
+					return port == otherClackServer.port &&
+							closeConnection == otherClackServer.closeConnection &&
+							dataToSendToClient.equals(otherClackServer.dataToSendToClient);
+				}
+				return false;
+			}
+		} else {
+			return false;
+		}	
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Server: " + port + " " + closeConnection + " " + dataToReceiveFromClient.toString() + " " + dataToSendToClient.toString();
+		return "Server: " + port + " " + closeConnection + " " + (dataToReceiveFromClient == null ? "null" : dataToReceiveFromClient.toString()) + " " + (dataToSendToClient == null ? "null" : dataToSendToClient.toString());
+
+	}
+
+	/**
+	 * main method for server, takes arguments from the command line and initializes the server accordingly.
+	 * @param args
+	 */
+	public static void main(String args[])
+	{
+		try {
+			ClackServer server;
+			switch (args.length) {
+			case 0:
+				server = new ClackServer();
+				server.start();
+				break;
+			case 1:
+				server = new ClackServer(Integer.parseInt(args[0]));
+				server.start();
+				break;
+			default:
+				System.err.println("Improper arguments");
+			}
+		}catch (NumberFormatException nfe) {
+			System.err.println("NumberFormatException invalid port number format");
+		}
 	}
 }
