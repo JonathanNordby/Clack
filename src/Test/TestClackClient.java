@@ -1,6 +1,6 @@
-package Test;
+package src.Test;
 
-import main.ClackClient;
+import src.main.ClackClient;
 
 public class TestClackClient {
 

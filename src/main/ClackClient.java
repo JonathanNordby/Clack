@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,9 +8,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import data.ClackData;
-import data.FileClackData;
-import data.MessageClackData;
+import src.data.ClackData;
+import src.data.FileClackData;
+import src.data.MessageClackData;
 
 /**
  * The Client version of the Clack program
@@ -64,11 +64,13 @@ public class ClackClient {
 			inFromServer = new ObjectInputStream(connection.getInputStream());
 			inFromStd = new Scanner(System.in);
 			closeConnection = false;
+
+			Runnable clientThread = new ClientSideServerListener(this);
+			clientThread.run();
+
 			do {
 				readClientData();
 				sendData();
-				receiveData();
-				printData();
 			} while (!closeConnection);
 			inFromStd.close();
 			connection.close();
@@ -78,7 +80,7 @@ public class ClackClient {
 		} catch (ConnectException ce) {
 			System.err.println("Could not connect to the server.");
 		} catch (IOException e) {
-			System.err.println("I/O Error occured");
+			System.err.println("I/O Error occurred");
 			e.printStackTrace();
 		}
 
@@ -155,6 +157,8 @@ public class ClackClient {
 	public int getPort() {
 		return port;
 	}
+
+	public boolean getConnectionStatus() { return closeConnection; }
 
 	@Override
 	public final int hashCode() {
