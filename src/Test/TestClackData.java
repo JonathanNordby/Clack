@@ -1,4 +1,4 @@
-package Test;
+package src.Test;
 import src.data.MessageClackData;
 
 import java.io.IOException;

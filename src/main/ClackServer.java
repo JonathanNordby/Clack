@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.io.EOFException;
 import java.io.IOException;
