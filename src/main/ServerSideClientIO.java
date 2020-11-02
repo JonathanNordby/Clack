@@ -39,7 +39,7 @@ public class ServerSideClientIO implements Runnable {
 			do {
 				receiveData();
 				setDataToSendToClient(dataToReceiveFromClient);
-				sendData();
+				server.broadcast(dataToSendToClient);
 			} while (!closeConnection);
 		} catch (IOException e) {
 			System.err.println("I/O Error while connecting");
@@ -60,10 +60,11 @@ public class ServerSideClientIO implements Runnable {
 	public void receiveData() {
 		try {
 			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-			if (dataToReceiveFromClient.getData() == "DONE") {
+			if (dataToReceiveFromClient.getData().equals("DONE")) {
+				outToClient.close();
+				inFromClient.close();
 				clientSocket.close();
 				server.remove(this);
-
 			}
 			System.out.println(dataToReceiveFromClient);
 		} catch (EOFException e) {

@@ -8,14 +8,14 @@ public class ClientSideServerListener implements Runnable{
     @Override
     public void run() {
         while(!client.getConnectionStatus()) {
+        	System.out.println("We made it");
             client.receiveData();
             client.printData();
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                System.err.println("interrupted");
-            }
+          //  try {
+           //     wait();
+           // } catch (InterruptedException e) {
+          //      System.err.println("interrupted");
+         //   }
         }
-        notify();
     }
 }

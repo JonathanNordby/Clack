@@ -70,13 +70,14 @@ public class ClackClient {
 			Thread clientThread = new Thread(server);
 			clientThread.start();
 
-			do {
+			while (!closeConnection) {
 				readClientData();
 				sendData();
-				wait();
-			} while (!closeConnection);
-			notify();
+				//wait();
+			}
 			inFromStd.close();
+			inFromServer.close();
+			outToServer.close();
 			connection.close();
 		} catch (UnknownHostException e) {
 			System.err.println("Cannot resolve IP Address");
@@ -86,8 +87,8 @@ public class ClackClient {
 		} catch (IOException e) {
 			System.err.println("I/O Error occurred");
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			System.err.println("interrupted");
+	//	} catch (InterruptedException e) {
+	//		System.err.println("interrupted");
 		}
 
 	}

@@ -106,14 +106,30 @@ public class ClackServer {
 	
 	public synchronized void broadcast(ClackData objectToBroadcastToClients) {
 		
-		for (ServerSideClientIO client : ServerSideIOList) {
-			client.setDataToSendToClient(objectToBroadcastToClients);
-			client.sendData();
+		try {
+			wait();
+			for (ServerSideClientIO client : ServerSideIOList) {
+				System.out.println("Sending to a client!");
+				client.setDataToSendToClient(objectToBroadcastToClients);
+				client.sendData();
+			}
+		} catch (InterruptedException e) {
+			System.err.println("broadcast interrupted");
+			e.printStackTrace();
 		}
+		notify();
 	}
 	
 	public synchronized void remove(ServerSideClientIO serverSideClientToRemove) {
-		ServerSideIOList.remove(serverSideClientToRemove);
+		try {
+			wait();
+			ServerSideIOList.remove(serverSideClientToRemove);
+			System.out.println("Removed");
+		} catch (InterruptedException e) {
+			System.err.println("remove interrupted");
+			e.printStackTrace();
+		}
+		notify();
 	}
 
 
