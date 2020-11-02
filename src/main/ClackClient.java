@@ -71,7 +71,9 @@ public class ClackClient {
 			do {
 				readClientData();
 				sendData();
+				wait();
 			} while (!closeConnection);
+			notifyAll();
 			inFromStd.close();
 			connection.close();
 		} catch (UnknownHostException e) {
@@ -82,6 +84,8 @@ public class ClackClient {
 		} catch (IOException e) {
 			System.err.println("I/O Error occurred");
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			System.err.println("interrupted");
 		}
 
 	}

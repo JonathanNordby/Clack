@@ -31,11 +31,20 @@ public class ServerSideClientIO implements Runnable {
     @Override
     public void run() {
 
-        do {
-            receiveData();
-            setDataToSendToClient(dataToReceiveFromClient);
-            sendData();
-        } while (!closeConnection);
+        try {
+            System.out.println(clientSocket.getInetAddress());
+            outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
+            inFromClient = new ObjectInputStream(clientSocket.getInputStream());
+
+            do {
+                receiveData();
+                setDataToSendToClient(dataToReceiveFromClient);
+                sendData();
+            } while (!closeConnection);
+        } catch (IOException e) {
+            System.err.println("I/O Error while connecting");
+            e.printStackTrace();
+        }
 
     }
 
@@ -51,8 +60,10 @@ public class ServerSideClientIO implements Runnable {
     public void receiveData() {
         try {
             dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-            if (dataToReceiveFromClient.getData() == "DONE")
+            if (dataToReceiveFromClient.getData() == "DONE") {
                 server.remove(this);
+                clientSocket.close();
+            }
             System.out.println(dataToReceiveFromClient);
         } catch (EOFException e) {
             closeConnection = true;

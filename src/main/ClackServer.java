@@ -1,11 +1,9 @@
 package src.main;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import src.data.ClackData;
 
@@ -20,8 +18,9 @@ public class ClackServer {
 	private boolean closeConnection;
 	ClackData dataToReceiveFromClient;
 	ClackData dataToSendToClient;
-	ObjectInputStream inFromClient;
-	ObjectOutputStream outToClient;
+	//	ObjectInputStream inFromClient;
+//	ObjectOutputStream outToClient;
+	ArrayList<ServerSideClientIO> ServerSideIOList;
 	private final static int DEFAULT_PORT = 7000;
 
 	/**
@@ -35,8 +34,9 @@ public class ClackServer {
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
-		inFromClient = null;
-		outToClient = null;
+		ServerSideIOList = new ArrayList<ServerSideClientIO>();
+//		inFromClient = null;
+//		outToClient = null;
 	}
 	/**
 	 * creates a Clack Server with a default port of 7000
@@ -51,22 +51,24 @@ public class ClackServer {
 	public void start() {
 		try {
 			ServerSocket server = new ServerSocket(port);
-			Socket client = server.accept();
-			System.out.println(client.getInetAddress());
-			outToClient = new ObjectOutputStream(client.getOutputStream());
-			inFromClient = new ObjectInputStream(client.getInputStream());
+			//Socket client = server.accept();
+			//System.out.println(client.getInetAddress());
+			//outToClient = new ObjectOutputStream(client.getOutputStream());
+			//inFromClient = new ObjectInputStream(client.getInputStream());
 			closeConnection = false;
-			do {
-				//if (inFromClient.available() > 0) {
-					receiveData();
-					dataToSendToClient = dataToReceiveFromClient;
-					sendData();
-				//}
-			}while(!closeConnection);
+			while (!closeConnection) {
+				Socket client = server.accept();
+				ServerSideClientIO IOThing = new ServerSideClientIO(this, client);
+				ServerSideIOList.add(IOThing);
+				Thread serverThread = new Thread(IOThing);
+				serverThread.start();
 
-			client.close();
+
+			}
+//			client.close();
 			server.close();
 		} catch (IOException e) {
+			System.err.println("Error opening a connection");
 			e.printStackTrace();
 		}
 	}
@@ -74,32 +76,44 @@ public class ClackServer {
 	/**
 	 * sends the data to the client
 	 */
-	public void sendData() {
-		try {
-				outToClient.writeObject(dataToSendToClient);
-		} catch (IOException e) {
-			System.err.println("Error in I/O");
-			e.printStackTrace();
-		}
-	}
+//	public void sendData() {
+//		try {
+//				outToClient.writeObject(dataToSendToClient);
+//		} catch (IOException e) {
+//			System.err.println("Error in I/O");
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * TODO
 	 */
-	public void receiveData() {
-		try {
-				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-				if(dataToReceiveFromClient.getData() == "DONE")
-					closeConnection = true;
-				System.out.println(dataToReceiveFromClient);
-		} catch (EOFException e) {
-			closeConnection = true;
-		} catch (ClassNotFoundException e) {
-			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+//	public void receiveData() {
+//		try {
+//				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
+//				if(dataToReceiveFromClient.getData() == "DONE")
+//					closeConnection = true;
+//				System.out.println(dataToReceiveFromClient);
+//		} catch (EOFException e) {
+//			closeConnection = true;
+//		} catch (ClassNotFoundException e) {
+//			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+
+	public synchronized void broadcast(ClackData objectToBroadcastToClients) {
+
+		for (ServerSideClientIO client : ServerSideIOList) {
+			client.setDataToSendToClient(objectToBroadcastToClients);
+			client.sendData();
 		}
+	}
+
+	public synchronized void remove(ServerSideClientIO serverSideClientToRemove) {
+		ServerSideIOList.remove(serverSideClientToRemove);
 	}
 
 
@@ -140,13 +154,13 @@ public class ClackServer {
 			} else {
 				return port == otherClackServer.port &&
 						closeConnection == otherClackServer.closeConnection &&
-						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);				
+						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
 			}
 		} else if (dataToSendToClient != null && otherClackServer.dataToSendToClient != null) {
 			if (dataToReceiveFromClient != null && otherClackServer.dataToReceiveFromClient != null) {
 				return port == otherClackServer.port &&
 						closeConnection == otherClackServer.closeConnection &&
-						dataToSendToClient.equals(otherClackServer.dataToSendToClient) && 
+						dataToSendToClient.equals(otherClackServer.dataToSendToClient) &&
 						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
 			} else {
 				if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
@@ -158,7 +172,7 @@ public class ClackServer {
 			}
 		} else {
 			return false;
-		}	
+		}
 	}
 
 	@Override
@@ -176,16 +190,16 @@ public class ClackServer {
 		try {
 			ClackServer server;
 			switch (args.length) {
-			case 0:
-				server = new ClackServer();
-				server.start();
-				break;
-			case 1:
-				server = new ClackServer(Integer.parseInt(args[0]));
-				server.start();
-				break;
-			default:
-				System.err.println("Improper arguments");
+				case 0:
+					server = new ClackServer();
+					server.start();
+					break;
+				case 1:
+					server = new ClackServer(Integer.parseInt(args[0]));
+					server.start();
+					break;
+				default:
+					System.err.println("Improper arguments");
 			}
 		}catch (NumberFormatException nfe) {
 			System.err.println("NumberFormatException invalid port number format");

@@ -11,7 +11,13 @@ public class ClientSideServerListener implements Runnable{
         while(!client.getConnectionStatus()) {
             client.receiveData();
             client.printData();
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                System.err.println("interrupted");
+            }
         }
+        notifyAll();
     }
 
 }
