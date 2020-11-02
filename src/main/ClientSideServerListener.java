@@ -10,6 +10,7 @@ public class ClientSideServerListener implements Runnable{
         while(!client.getConnectionStatus()) {
         	//System.out.println("We made it");
             client.receiveData();
+            //System.out.println("Data received");
             client.printData();
           //  try {
            //     wait();

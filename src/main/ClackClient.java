@@ -65,7 +65,6 @@ public class ClackClient {
 			inFromStd = new Scanner(System.in);
 			closeConnection = false;
 
-			//Runnable clientThread = new ClientSideServerListener(this);D
 			ClientSideServerListener server = new ClientSideServerListener(this);
 			Thread clientThread = new Thread(server);
 			clientThread.start();
@@ -104,8 +103,7 @@ public class ClackClient {
 				closeConnection = true;
 				dataToSendToServer = new MessageClackData(userName, "DONE", ClackData.CONSTANT_LOGOUT);
 			} else if (input.startsWith("SENDFILE")) {
-				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1),
-						ClackData.CONSTANT_SENDFILE);
+				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1), ClackData.CONSTANT_SENDFILE);
 				if (dataToSendToServer instanceof FileClackData) {
 					try {
 						((FileClackData) dataToSendToServer).readFileContents(KEY);
@@ -133,11 +131,14 @@ public class ClackClient {
 	}
 
 	public void receiveData() {
+		//System.out.println("Receiving Data");
 		try {
-//			if (dataToSendToServer != null) {
+			if (dataToSendToServer != null) {
+				//System.out.println((MessageClackData) dataToSendToServer);
+				//System.out.println(dataToSendToServer.getType());
 				if (dataToSendToServer.getType() != ClackData.CONSTANT_LOGOUT) {
 					dataToReceiveFromServer = (ClackData) inFromServer.readObject();
-//				}
+				}
 			}
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
@@ -153,9 +154,9 @@ public class ClackClient {
 	 */
 	public void printData() {
 		if (!closeConnection) {
-//			if (dataToSendToServer != null) {
+			if (dataToSendToServer != null) {
 				System.out.println(dataToReceiveFromServer.getData(KEY));
-//			}
+			}
 		}
 	}
 
