@@ -76,9 +76,9 @@ public class ClackClient {
 				//wait();
 			}
 			inFromStd.close();
+			connection.close();
 			inFromServer.close();
 			outToServer.close();
-			connection.close();
 		} catch (UnknownHostException e) {
 			System.err.println("Cannot resolve IP Address");
 			e.printStackTrace();
@@ -102,7 +102,7 @@ public class ClackClient {
 			input = inFromStd.nextLine();
 			if (input.startsWith("DONE")) {
 				closeConnection = true;
-				dataToSendToServer = new MessageClackData(userName, "DONE", ClackData.CONSTANT_SENDMESSAGE);
+				dataToSendToServer = new MessageClackData(userName, "DONE", ClackData.CONSTANT_LOGOUT);
 			} else if (input.startsWith("SENDFILE")) {
 				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1),
 						ClackData.CONSTANT_SENDFILE);
@@ -134,7 +134,11 @@ public class ClackClient {
 
 	public void receiveData() {
 		try {
-			dataToReceiveFromServer = (ClackData) inFromServer.readObject();
+//			if (dataToSendToServer != null) {
+				if (dataToSendToServer.getType() != ClackData.CONSTANT_LOGOUT) {
+					dataToReceiveFromServer = (ClackData) inFromServer.readObject();
+//				}
+			}
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
 			e.printStackTrace();
@@ -149,7 +153,9 @@ public class ClackClient {
 	 */
 	public void printData() {
 		if (!closeConnection) {
-			System.out.println(dataToReceiveFromServer.getData(KEY));
+//			if (dataToSendToServer != null) {
+				System.out.println(dataToReceiveFromServer.getData(KEY));
+//			}
 		}
 	}
 

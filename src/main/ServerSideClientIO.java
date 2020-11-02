@@ -32,15 +32,15 @@ public class ServerSideClientIO implements Runnable {
 	public void run() {
 
 		try {
-			System.out.println(clientSocket.getInetAddress());
+			System.out.println("A wild host has appeared: " + clientSocket.getInetAddress());
 			outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 			inFromClient = new ObjectInputStream(clientSocket.getInputStream());
 
-			do {
+			while (!closeConnection) {
 				receiveData();
 				setDataToSendToClient(dataToReceiveFromClient);
 				server.broadcast(dataToSendToClient);
-			} while (!closeConnection);
+			}
 		} catch (IOException e) {
 			System.err.println("I/O Error while connecting");
 			e.printStackTrace();
@@ -60,11 +60,13 @@ public class ServerSideClientIO implements Runnable {
 	public void receiveData() {
 		try {
 			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-			if (dataToReceiveFromClient.getData().equals("DONE")) {
+			if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LOGOUT) {
+				closeConnection = true;
+				server.remove(this);
+				clientSocket.close();
 				outToClient.close();
 				inFromClient.close();
-				clientSocket.close();
-				server.remove(this);
+
 			}
 			System.out.println(dataToReceiveFromClient);
 		} catch (EOFException e) {

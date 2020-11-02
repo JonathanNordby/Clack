@@ -8,7 +8,7 @@ public class ClientSideServerListener implements Runnable{
     @Override
     public void run() {
         while(!client.getConnectionStatus()) {
-        	System.out.println("We made it");
+        	//System.out.println("We made it");
             client.receiveData();
             client.printData();
           //  try {
