@@ -34,6 +34,7 @@ public class ClackServer {
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
+		ServerSideIOList = new ArrayList<ServerSideClientIO>();
 //		inFromClient = null;
 //		outToClient = null;
 	}
@@ -58,10 +59,11 @@ public class ClackServer {
 			while (!closeConnection) {
 				Socket client = server.accept();
 				ServerSideClientIO IOThing = new ServerSideClientIO(this, client);
-				System.out.println(this);
 				ServerSideIOList.add(IOThing);
 				Thread serverThread = new Thread(IOThing);
 				serverThread.start();
+				
+
 			}
 //			client.close();
 			server.close();
