@@ -120,7 +120,7 @@ public class ClackClient {
 				}
 			} else if (input == "LISTUSERS") {
 				System.out.println("Not Yet Supported");
-				dataToSendToServer = new MessageClackData(userName, "Listing users...", ClackData.CONSTANT_LISTUSERS);
+				dataToSendToServer = new MessageClackData(userName, "", ClackData.CONSTANT_LISTUSERS);
 			} else {
 				dataToSendToServer = new MessageClackData(userName, input, KEY, ClackData.CONSTANT_SENDMESSAGE);
 				//System.out.println((MessageClackData) dataToSendToServer);

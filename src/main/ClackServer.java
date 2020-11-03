@@ -123,21 +123,6 @@ public class ClackServer {
 		//notifyAll();
 	}
 
-	public synchronized void broadcastUserList() {
-		String message = "";
-		for(String userName : userNameList) {
-			message = message + userName + "\n";
-		}
-		dataToSendToClient = new MessageClackData("", message , ClackData.CONSTANT_SENDMESSAGE);
-
-		for(ServerSideClientIO client : ServerSideIOList) {
-			System.out.println("Sending user list to a client!");
-
-			client.sendData();
-		}
-
-
-	}
 
 	public synchronized void remove(ServerSideClientIO serverSideClientToRemove, String userName) {
 		//try {

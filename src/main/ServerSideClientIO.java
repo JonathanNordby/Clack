@@ -64,7 +64,9 @@ public class ServerSideClientIO implements Runnable {
 
 	public void receiveData() {
 		try {
-			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
+			if(dataToReceiveFromClient.getType() == ClackData.CONSTANT_LISTUSERS){ setUpUserList(); }
+			else { dataToReceiveFromClient = (ClackData) inFromClient.readObject(); }
+
 			if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LOGOUT) {
 				closeConnection = true;
 				server.remove(this, dataToReceiveFromClient.getUserName());
@@ -75,8 +77,6 @@ public class ServerSideClientIO implements Runnable {
 			} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_NEWUSER) {
 				String userName = dataToReceiveFromClient.getUserName();
 				server.userNameList.add(userName);
-			} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LISTUSERS) {
-
 			}
 			System.out.println(dataToReceiveFromClient);
 		} catch (EOFException e) {
@@ -87,6 +87,14 @@ public class ServerSideClientIO implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public synchronized void setUpUserList() {
+		String message = "Online Users:\n";
+		for(String userName : server.userNameList) {
+			message = message + userName + "\n";
+		}
+		dataToSendToClient = new MessageClackData("", message , ClackData.CONSTANT_SENDMESSAGE);
 	}
 
 	public ClackData setDataToSendToClient(ClackData data) {
