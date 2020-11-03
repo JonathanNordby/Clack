@@ -5,10 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.sun.security.ntlm.Server;
 import src.data.ClackData;
-import src.data.MessageClackData;
-import sun.plugin2.message.Message;
 
 /**
  * The Server version of Clack

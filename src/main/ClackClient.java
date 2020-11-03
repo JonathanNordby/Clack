@@ -11,7 +11,6 @@ import java.util.Scanner;
 import src.data.ClackData;
 import src.data.FileClackData;
 import src.data.MessageClackData;
-import sun.plugin2.message.Message;
 
 /**
  * The Client version of the Clack program
