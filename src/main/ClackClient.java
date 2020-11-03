@@ -115,7 +115,7 @@ public class ClackClient {
 				}
 			} else if (input == "LISTUSERS") {
 				System.out.println("Not Yet Supported");
-				// NOTHING YET
+				dataToSendToServer = new MessageClackData(userName, "Listing users...", ClackData.CONSTANT_LISTUSERS);
 			} else {
 				dataToSendToServer = new MessageClackData(userName, input, KEY, ClackData.CONSTANT_SENDMESSAGE);
 				//System.out.println((MessageClackData) dataToSendToServer);
@@ -140,14 +140,17 @@ public class ClackClient {
 				//System.out.println((MessageClackData) dataToSendToServer);
 				//System.out.println(dataToSendToServer.getType());
 				dataToReceiveFromServer = (ClackData) inFromServer.readObject();
+				
 
 //			}
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.err.println("Problem reading data from server");
-			e.printStackTrace();
+			if (!closeConnection) {
+				System.err.println("Problem reading data from server");
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -259,6 +262,5 @@ public class ClackClient {
 			client = new ClackClient();
 			client.start();
 		}
-
 	}
 }

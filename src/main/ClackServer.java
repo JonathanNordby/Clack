@@ -109,7 +109,7 @@ public class ClackServer {
 		//try {
 			for (ServerSideClientIO client : ServerSideIOList) {
 				System.out.println("Sending to a client!");
-				//wait();
+				
 				client.setDataToSendToClient(objectToBroadcastToClients);
 				client.sendData();
 			}

@@ -71,6 +71,8 @@ public class ServerSideClientIO implements Runnable {
 				outToClient.close();
 				inFromClient.close();
 
+			} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LISTUSERS) {
+				
 			}
 			System.out.println(dataToReceiveFromClient);
 		} catch (EOFException e) {
