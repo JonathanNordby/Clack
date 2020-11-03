@@ -1,4 +1,4 @@
-package src.main;
+package main;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -6,9 +6,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import src.data.ClackData;
-import src.data.MessageClackData;
+import data.ClackData;
+import data.MessageClackData;
 
+/**
+ * an I/O Module for interacting with a client and a server
+ * @author Jonathan Nordby <br> Stephen Miner
+ *
+ */
 public class ServerSideClientIO implements Runnable {
 
 	private boolean closeConnection;
@@ -19,6 +24,11 @@ public class ServerSideClientIO implements Runnable {
 	private ClackServer server;
 	private Socket clientSocket;
 
+	/**
+	 * Creates a ServerSideClientIO
+	 * @param server the server to bind to
+	 * @param clientSocket the socket where the client to be bound to is connected
+	 */
 	public ServerSideClientIO(ClackServer server, Socket clientSocket) {
 		this.server = server;
 		this.clientSocket = clientSocket;
@@ -53,6 +63,9 @@ public class ServerSideClientIO implements Runnable {
 
 	}
 
+	/**
+	 * Writes data to the OutputStream
+	 */
 	public void sendData() {
 		try {
 			outToClient.writeObject(dataToSendToClient);
@@ -62,6 +75,9 @@ public class ServerSideClientIO implements Runnable {
 		}
 	}
 
+	/**
+	 * Reads data from the InputStream
+	 */
 	public void receiveData() {
 		try {
 			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
@@ -91,14 +107,22 @@ public class ServerSideClientIO implements Runnable {
 		}
 	}
 
-	public synchronized void setUpUserList() {
+	/**
+	 * Sets up the user list to send when SENDUSERS is called
+	 */
+	public void setUpUserList() {
 		String message = "Online Users:\n";
 		for(String userName : server.userNameList) {
-			message = message + userName + "\n";
+			message += userName + "\n";
 		}
-		dataToSendToClient = new MessageClackData("", message , ClackData.CONSTANT_SENDMESSAGE);
+		dataToReceiveFromClient = new MessageClackData("", message , ClackData.CONSTANT_LISTUSERS);
 	}
 
+	/**
+	 * Sets the data in the output buffer to data
+	 * @param data
+	 * @return data
+	 */
 	public ClackData setDataToSendToClient(ClackData data) {
 
 		dataToSendToClient = data;

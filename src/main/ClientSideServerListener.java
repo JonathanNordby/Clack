@@ -1,23 +1,23 @@
-package src.main;
+package main;
 
-public class ClientSideServerListener implements Runnable{
+/**
+ * @author Sephen Miner <br> Jonathan Nordby
+ */
+public class ClientSideServerListener implements Runnable {
 
     private ClackClient client;
 
+    /**
+     * Creates a ClientSideServerListener object
+     * @param client the Client that the object is to be bound to
+     */
     ClientSideServerListener(ClackClient client) { this.client = client; }
 
     @Override
     public void run() {
         while(!client.getConnectionStatus()) {
-            //System.out.println("We made it");
             client.receiveData();
-            //System.out.println("Data received");
             client.printData();
-            //  try {
-            //     wait();
-            // } catch (InterruptedException e) {
-            //      System.err.println("interrupted");
-            //   }
         }
     }
 }

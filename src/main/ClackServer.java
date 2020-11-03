@@ -1,16 +1,15 @@
-package src.main;
+package main;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import src.data.ClackData;
+import data.ClackData;
 
 /**
  * The Server version of Clack
- * @author Jonathan Nordby
- *
+ * @author Jonathan Nordby <br> Stephen Miner
  */
 public class ClackServer {
 
@@ -18,9 +17,7 @@ public class ClackServer {
 	private boolean closeConnection;
 	ClackData dataToReceiveFromClient;
 	ClackData dataToSendToClient;
-	//	ObjectInputStream inFromClient;
-//	ObjectOutputStream outToClient;
-	ArrayList<ServerSideClientIO> ServerSideIOList;
+	ArrayList<ServerSideClientIO> serverSideIOList;
 	ArrayList<String> userNameList;
 	private final static int DEFAULT_PORT = 7000;
 
@@ -35,7 +32,8 @@ public class ClackServer {
 		this.port = port;
 		dataToReceiveFromClient = null;
 		dataToSendToClient = null;
-		ServerSideIOList = new ArrayList<ServerSideClientIO>();
+		serverSideIOList = new ArrayList<ServerSideClientIO>();
+		userNameList = new ArrayList<String>();
 //		inFromClient = null;
 //		outToClient = null;
 	}
@@ -52,21 +50,16 @@ public class ClackServer {
 	public void start() {
 		try {
 			ServerSocket server = new ServerSocket(port);
-			//Socket client = server.accept();
-			//System.out.println(client.getInetAddress());
-			//outToClient = new ObjectOutputStream(client.getOutputStream());
-			//inFromClient = new ObjectInputStream(client.getInputStream());
 			closeConnection = false;
 			while (!closeConnection) {
 				Socket client = server.accept();
 				ServerSideClientIO IOThing = new ServerSideClientIO(this, client);
-				ServerSideIOList.add(IOThing);
+				serverSideIOList.add(IOThing);
 				Thread serverThread = new Thread(IOThing);
 				serverThread.start();
 
 
 			}
-//			client.close();
 			server.close();
 		} catch (IOException e) {
 			System.err.println("Error opening a connection");
@@ -75,63 +68,28 @@ public class ClackServer {
 	}
 
 	/**
-	 * sends the data to the client
+	 * Broadcasts the specified data to all connected clients
+	 * @param objectToBroadcastToClients the data to be broadcasted
 	 */
-//	public void sendData() {
-//		try {
-//				outToClient.writeObject(dataToSendToClient);
-//		} catch (IOException e) {
-//			System.err.println("Error in I/O");
-//			e.printStackTrace();
-//		}
-//	}
-
-	/**
-	 * TODO
-	 */
-//	public void receiveData() {
-//		try {
-//				dataToReceiveFromClient = (ClackData) inFromClient.readObject();
-//				if(dataToReceiveFromClient.getData() == "DONE")
-//					closeConnection = true;
-//				System.out.println(dataToReceiveFromClient);
-//		} catch (EOFException e) {
-//			closeConnection = true;
-//		} catch (ClassNotFoundException e) {
-//			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	public synchronized void broadcast(ClackData objectToBroadcastToClients) {
-		//try {
-		for (ServerSideClientIO client : ServerSideIOList) {
+		for (ServerSideClientIO client : serverSideIOList) {
 			System.out.println("Sending to a client!");
 
 			client.setDataToSendToClient(objectToBroadcastToClients);
 			client.sendData();
 		}
-		//} catch (InterruptedException e) {
-		//	System.err.println("broadcast interrupted");
-		//	e.printStackTrace();
-		//}
-		//notifyAll();
 	}
 
 
+	/**
+	 * Removes a host from the connection.
+	 * @param serverSideClientToRemove the the IO Module that corresponds to the client to remove
+	 * @param userName the username that matches the client to be removed
+	 */
 	public synchronized void remove(ServerSideClientIO serverSideClientToRemove, String userName) {
-		//try {
-		//wait();
-		ServerSideIOList.remove(serverSideClientToRemove);
+		serverSideIOList.remove(serverSideClientToRemove);
 		userNameList.remove(userName);
-		System.out.println("Removed");
-		//} catch (InterruptedException e) {
-		//	System.err.println("remove interrupted");
-		//	e.printStackTrace();
-		//}
-		//notifyAll();
+		System.out.println(userName + " Disconnected");
 	}
 
 

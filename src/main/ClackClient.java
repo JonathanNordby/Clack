@@ -1,4 +1,4 @@
-package src.main;
+package main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,17 +8,16 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import src.data.ClackData;
-import src.data.FileClackData;
-import src.data.MessageClackData;
+import data.ClackData;
+import data.FileClackData;
+import data.MessageClackData;
 
 /**
  * The Client version of the Clack program
  *
- * @author Jonathan Nordby
+ * @author Jonathan Nordby <br> Stephen Miner
  *
  */
-
 public class ClackClient {
 
 	private String userName, hostName;
@@ -31,18 +30,36 @@ public class ClackClient {
 	private ObjectInputStream inFromServer;
 	private ObjectOutputStream outToServer;
 
+	/**
+	 * Creates a ClackClient with a default port of 7000
+	 * @param userName the desired username
+	 * @param hostName the hostname of the server to connect to
+	 */
 	public ClackClient(String userName, String hostName) {
 		this(userName, hostName, DEFAULT_PORT);
 	}
 
+	/**
+	 * Creates a ClackClient with a default port of 7000 and the default hostname is localhost (127.0.0.1)
+	 * @param userName the desired username
+	 */
 	public ClackClient(String userName) {
 		this(userName, "localhost", DEFAULT_PORT);
 	}
 
+	/**
+	 * Creates a ClackClient with a default port of 7000 and the default hostname is localhost (127.0.0.1) and a default username of anonymous.
+	 */
 	public ClackClient() {
 		this("anonymous", "localhost", DEFAULT_PORT);
 	}
 
+	/**
+	 * Creates a ClackClient
+	 * @param userName the desired username
+	 * @param hostName the hostname of the server to connect to
+	 * @param port the port number to use
+	 */
 	public ClackClient(String userName, String hostName, int port) {
 		if (port < 1024) {
 			throw new IllegalArgumentException("Invalid port number!");
@@ -76,7 +93,6 @@ public class ClackClient {
 			while (!closeConnection) {
 				readClientData();
 				sendData();
-				//wait();
 			}
 			inFromStd.close();
 			connection.close();
@@ -91,8 +107,6 @@ public class ClackClient {
 		} catch (IOException e) {
 			System.err.println("I/O Error occurred");
 			e.printStackTrace();
-			//	} catch (InterruptedException e) {
-			//		System.err.println("interrupted");
 		}
 
 	}
@@ -117,16 +131,17 @@ public class ClackClient {
 					}
 					((FileClackData) dataToSendToServer).writeFileContents(KEY);
 				}
-			} else if (input == "LISTUSERS") {
-				System.out.println("Not Yet Supported");
+			} else if (input.startsWith("LISTUSERS")) {
 				dataToSendToServer = new MessageClackData(userName, "", ClackData.CONSTANT_LISTUSERS);
 			} else {
 				dataToSendToServer = new MessageClackData(userName, input, KEY, ClackData.CONSTANT_SENDMESSAGE);
-				//System.out.println((MessageClackData) dataToSendToServer);
 			}
 		}
 	}
 
+	/**
+	 * Writes the data to the OutputStream
+	 */
 	public void sendData() {
 		try {
 			outToServer.writeObject(dataToSendToServer);
@@ -136,17 +151,12 @@ public class ClackClient {
 		}
 	}
 
+	/**
+	 * reads data out of the InputStream and stores it in a buffer.
+	 */
 	public void receiveData() {
-//		System.out.println("Receiving Data");
 		try {
-//			if (dataToReceiveFromServer != null) {
-//				System.out.println("Data isn't null, should print something");
-			//System.out.println((MessageClackData) dataToSendToServer);
-			//System.out.println(dataToSendToServer.getType());
 			dataToReceiveFromServer = (ClackData) inFromServer.readObject();
-
-
-//			}
 		} catch (ClassNotFoundException e) {
 			System.err.println("ClackData cannot be found. -THIS SHOULD NEVER HAPPEN");
 			e.printStackTrace();
@@ -159,11 +169,13 @@ public class ClackClient {
 	}
 
 	/**
-	 * Prints out the data that is to be sent to the server
+	 * Prints out the data from the buffer.
 	 */
 	public void printData() {
 		if (!closeConnection) {
-			if (dataToReceiveFromServer != null || dataToReceiveFromServer.getType() != ClackData.CONSTANT_LOGOUT) {
+			if (dataToReceiveFromServer.getType() == ClackData.CONSTANT_LISTUSERS) {
+				System.out.println(dataToReceiveFromServer.getData());
+			}else if (dataToReceiveFromServer != null && (dataToReceiveFromServer.getType() != ClackData.CONSTANT_LOGOUT && dataToReceiveFromServer.getType() != ClackData.CONSTANT_NEWUSER)) {
 				System.out.println(dataToReceiveFromServer.getData(KEY));
 			}
 		}
