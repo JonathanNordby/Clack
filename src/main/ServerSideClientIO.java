@@ -64,21 +64,23 @@ public class ServerSideClientIO implements Runnable {
 
 	public void receiveData() {
 		try {
-			if(dataToReceiveFromClient.getType() == ClackData.CONSTANT_LISTUSERS){ setUpUserList(); }
-			else { dataToReceiveFromClient = (ClackData) inFromClient.readObject(); }
+			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
+			if(dataToReceiveFromClient != null) {
+				if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LISTUSERS) {
+					setUpUserList();
+				} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LOGOUT) {
+					closeConnection = true;
+					server.remove(this, dataToReceiveFromClient.getUserName());
+					clientSocket.close();
+					outToClient.close();
+					inFromClient.close();
 
-			if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LOGOUT) {
-				closeConnection = true;
-				server.remove(this, dataToReceiveFromClient.getUserName());
-				clientSocket.close();
-				outToClient.close();
-				inFromClient.close();
-
-			} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_NEWUSER) {
-				String userName = dataToReceiveFromClient.getUserName();
-				server.userNameList.add(userName);
+				} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_NEWUSER) {
+					String userName = dataToReceiveFromClient.getUserName();
+					server.userNameList.add(userName);
+				}
+				System.out.println(dataToReceiveFromClient);
 			}
-			System.out.println(dataToReceiveFromClient);
 		} catch (EOFException e) {
 			closeConnection = true;
 		} catch (ClassNotFoundException e) {
