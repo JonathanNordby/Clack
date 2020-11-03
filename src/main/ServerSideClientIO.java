@@ -41,10 +41,14 @@ public class ServerSideClientIO implements Runnable {
 				setDataToSendToClient(dataToReceiveFromClient);
 				server.broadcast(dataToSendToClient);
 			}
+			
+			inFromClient.close();
+			outToClient.close();
 		} catch (IOException e) {
 			System.err.println("I/O Error while connecting");
 			e.printStackTrace();
 		}
+
 
 	}
 
