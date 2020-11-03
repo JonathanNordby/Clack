@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,13 +8,14 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import data.ClackData;
-import data.FileClackData;
-import data.MessageClackData;
+import src.data.ClackData;
+import src.data.FileClackData;
+import src.data.MessageClackData;
+import sun.plugin2.message.Message;
 
 /**
  * The Client version of the Clack program
- * 
+ *
  * @author Jonathan Nordby
  *
  */
@@ -65,6 +66,10 @@ public class ClackClient {
 			inFromStd = new Scanner(System.in);
 			closeConnection = false;
 
+			MessageClackData newUser = new MessageClackData(this.getUserName(), this.getUserName(), ClackData.CONSTANT_NEWUSER);
+			dataToSendToServer = newUser;
+			sendData();
+
 			ClientSideServerListener server = new ClientSideServerListener(this);
 			Thread clientThread = new Thread(server);
 			clientThread.start();
@@ -87,8 +92,8 @@ public class ClackClient {
 		} catch (IOException e) {
 			System.err.println("I/O Error occurred");
 			e.printStackTrace();
-	//	} catch (InterruptedException e) {
-	//		System.err.println("interrupted");
+			//	} catch (InterruptedException e) {
+			//		System.err.println("interrupted");
 		}
 
 	}
@@ -137,10 +142,10 @@ public class ClackClient {
 		try {
 //			if (dataToReceiveFromServer != null) {
 //				System.out.println("Data isn't null, should print something");
-				//System.out.println((MessageClackData) dataToSendToServer);
-				//System.out.println(dataToSendToServer.getType());
-				dataToReceiveFromServer = (ClackData) inFromServer.readObject();
-				
+			//System.out.println((MessageClackData) dataToSendToServer);
+			//System.out.println(dataToSendToServer.getType());
+			dataToReceiveFromServer = (ClackData) inFromServer.readObject();
+
 
 //			}
 		} catch (ClassNotFoundException e) {
@@ -235,7 +240,7 @@ public class ClackClient {
 	/**
 	 * Main method, takes in user input from the command line and initializes the
 	 * client accordingly.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String args[]) {

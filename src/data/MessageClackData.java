@@ -1,4 +1,4 @@
-package data;
+package src.data;
 
 /**
  * Subclass of ClackData for when a user sends a message
@@ -48,9 +48,7 @@ public class MessageClackData extends ClackData {
 	/**
 	 * return the instant message
 	 */
-	public String getData() {
-		return this.message;
-	}
+	public String getData() { return this.message; }
 	
 	public String getData(String key) {
 		return (super.decrypt(message, key));

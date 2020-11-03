@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -6,7 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import data.ClackData;
+import src.data.ClackData;
+import src.data.MessageClackData;
 
 public class ServerSideClientIO implements Runnable {
 
@@ -41,7 +42,7 @@ public class ServerSideClientIO implements Runnable {
 				setDataToSendToClient(dataToReceiveFromClient);
 				server.broadcast(dataToSendToClient);
 			}
-			
+
 			inFromClient.close();
 			outToClient.close();
 		} catch (IOException e) {
@@ -66,13 +67,16 @@ public class ServerSideClientIO implements Runnable {
 			dataToReceiveFromClient = (ClackData) inFromClient.readObject();
 			if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LOGOUT) {
 				closeConnection = true;
-				server.remove(this);
+				server.remove(this, dataToReceiveFromClient.getUserName());
 				clientSocket.close();
 				outToClient.close();
 				inFromClient.close();
 
+			} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_NEWUSER) {
+				String userName = dataToReceiveFromClient.getUserName();
+				server.userNameList.add(userName);
 			} else if (dataToReceiveFromClient.getType() == ClackData.CONSTANT_LISTUSERS) {
-				
+
 			}
 			System.out.println(dataToReceiveFromClient);
 		} catch (EOFException e) {

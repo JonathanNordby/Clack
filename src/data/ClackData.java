@@ -1,4 +1,4 @@
-package data;
+package src.data;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -22,6 +22,7 @@ abstract public class ClackData implements Serializable {
 	public final static int CONSTANT_LOGOUT = 1;
 	public final static int CONSTANT_SENDMESSAGE = 2;
 	public final static int CONSTANT_SENDFILE = 3;
+	public final static int CONSTANT_NEWUSER = 4;
 	
 	/**
 	 * data contained in ClackData

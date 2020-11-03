@@ -1,11 +1,14 @@
-package main;
+package src.main;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import data.ClackData;
+import com.sun.security.ntlm.Server;
+import src.data.ClackData;
+import src.data.MessageClackData;
+import sun.plugin2.message.Message;
 
 /**
  * The Server version of Clack
@@ -18,9 +21,10 @@ public class ClackServer {
 	private boolean closeConnection;
 	ClackData dataToReceiveFromClient;
 	ClackData dataToSendToClient;
-//	ObjectInputStream inFromClient;
+	//	ObjectInputStream inFromClient;
 //	ObjectOutputStream outToClient;
 	ArrayList<ServerSideClientIO> ServerSideIOList;
+	ArrayList<String> userNameList;
 	private final static int DEFAULT_PORT = 7000;
 
 	/**
@@ -62,7 +66,7 @@ public class ClackServer {
 				ServerSideIOList.add(IOThing);
 				Thread serverThread = new Thread(IOThing);
 				serverThread.start();
-				
+
 
 			}
 //			client.close();
@@ -103,28 +107,44 @@ public class ClackServer {
 //			e.printStackTrace();
 //		}
 //	}
-	
+
 	public synchronized void broadcast(ClackData objectToBroadcastToClients) {
-		
 		//try {
-			for (ServerSideClientIO client : ServerSideIOList) {
-				System.out.println("Sending to a client!");
-				
-				client.setDataToSendToClient(objectToBroadcastToClients);
-				client.sendData();
-			}
+		for (ServerSideClientIO client : ServerSideIOList) {
+			System.out.println("Sending to a client!");
+
+			client.setDataToSendToClient(objectToBroadcastToClients);
+			client.sendData();
+		}
 		//} catch (InterruptedException e) {
 		//	System.err.println("broadcast interrupted");
 		//	e.printStackTrace();
 		//}
 		//notifyAll();
 	}
-	
-	public synchronized void remove(ServerSideClientIO serverSideClientToRemove) {
+
+	public synchronized void broadcastUserList() {
+		String message = "";
+		for(String userName : userNameList) {
+			message = message + userName + "\n";
+		}
+		dataToSendToClient = new MessageClackData("", message , ClackData.CONSTANT_SENDMESSAGE);
+
+		for(ServerSideClientIO client : ServerSideIOList) {
+			System.out.println("Sending user list to a client!");
+
+			client.sendData();
+		}
+
+
+	}
+
+	public synchronized void remove(ServerSideClientIO serverSideClientToRemove, String userName) {
 		//try {
-			//wait();
-			ServerSideIOList.remove(serverSideClientToRemove);
-			System.out.println("Removed");
+		//wait();
+		ServerSideIOList.remove(serverSideClientToRemove);
+		userNameList.remove(userName);
+		System.out.println("Removed");
 		//} catch (InterruptedException e) {
 		//	System.err.println("remove interrupted");
 		//	e.printStackTrace();
@@ -134,12 +154,14 @@ public class ClackServer {
 
 
 
+
 	/**
 	 * @return the port number as an int
 	 */
 	public int getPort() {
 		return port;
 	}
+
 
 	/**
 	 * @return a hashcode of the object that follows the general contract
@@ -170,13 +192,13 @@ public class ClackServer {
 			} else {
 				return port == otherClackServer.port &&
 						closeConnection == otherClackServer.closeConnection &&
-						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);				
+						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
 			}
 		} else if (dataToSendToClient != null && otherClackServer.dataToSendToClient != null) {
 			if (dataToReceiveFromClient != null && otherClackServer.dataToReceiveFromClient != null) {
 				return port == otherClackServer.port &&
 						closeConnection == otherClackServer.closeConnection &&
-						dataToSendToClient.equals(otherClackServer.dataToSendToClient) && 
+						dataToSendToClient.equals(otherClackServer.dataToSendToClient) &&
 						dataToReceiveFromClient.equals(otherClackServer.dataToReceiveFromClient);
 			} else {
 				if (dataToReceiveFromClient == null && otherClackServer.dataToReceiveFromClient == null) {
@@ -188,7 +210,7 @@ public class ClackServer {
 			}
 		} else {
 			return false;
-		}	
+		}
 	}
 
 	@Override
@@ -206,16 +228,16 @@ public class ClackServer {
 		try {
 			ClackServer server;
 			switch (args.length) {
-			case 0:
-				server = new ClackServer();
-				server.start();
-				break;
-			case 1:
-				server = new ClackServer(Integer.parseInt(args[0]));
-				server.start();
-				break;
-			default:
-				System.err.println("Improper arguments");
+				case 0:
+					server = new ClackServer();
+					server.start();
+					break;
+				case 1:
+					server = new ClackServer(Integer.parseInt(args[0]));
+					server.start();
+					break;
+				default:
+					System.err.println("Improper arguments");
 			}
 		}catch (NumberFormatException nfe) {
 			System.err.println("NumberFormatException invalid port number format");
