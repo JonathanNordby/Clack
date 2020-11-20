@@ -1,4 +1,4 @@
-package data;
+package src.data;
 
 import javafx.scene.image.Image;
 

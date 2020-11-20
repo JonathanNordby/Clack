@@ -1,6 +1,6 @@
-package main;
+package src.main;
 
-import data.ClackData;
+import src.data.ClackData;
 import javafx.scene.media.Media;
 
 public class VideoClackData extends ClackData {

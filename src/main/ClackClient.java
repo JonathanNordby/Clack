@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,9 +8,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import data.ClackData;
-import data.FileClackData;
-import data.MessageClackData;
+import src.data.ClackData;
+import src.data.FileClackData;
+import src.data.MessageClackData;
 import javafx.application.Application;
 
 /**
@@ -257,7 +257,7 @@ public class ClackClient {
 	 */
 	public static void main(String[] args) {
 		ClackClient client;
-		ClackGUI gui = new ClackGUI(args);
+		ClackGUI.main(args);
 		if (args.length >= 1) {
 			String[] arguments = args[0].split("(@|:)");
 			try {
