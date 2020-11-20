@@ -11,6 +11,7 @@ import java.util.Scanner;
 import data.ClackData;
 import data.FileClackData;
 import data.MessageClackData;
+import javafx.application.Application;
 
 /**
  * The Client version of the Clack program
@@ -254,8 +255,9 @@ public class ClackClient {
 	 *
 	 * @param args
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		ClackClient client;
+		ClackGUI gui = new ClackGUI(args);
 		if (args.length >= 1) {
 			String[] arguments = args[0].split("(@|:)");
 			try {

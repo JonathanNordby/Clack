@@ -23,6 +23,8 @@ abstract public class ClackData implements Serializable {
 	public final static int CONSTANT_SENDMESSAGE = 2;
 	public final static int CONSTANT_SENDFILE = 3;
 	public final static int CONSTANT_NEWUSER = 4;
+	public final static int CONSTANT_SENDIMAGE = 5;
+	public final static int CONSTANT_SENDVIDEO = 6;
 	
 	/**
 	 * data contained in ClackData
