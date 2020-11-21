@@ -1,4 +1,4 @@
-package src.data;
+package data;
 
 /**
  * Subclass of ClackData for when a user sends a message

@@ -1,6 +1,6 @@
-package src.test;
+package Test;
 
-import src.main.ClackServer;
+import main.ClackServer;
 
 public class TestClackServer {
 

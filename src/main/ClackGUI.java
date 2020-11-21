@@ -1,6 +1,10 @@
-package src.main;
+package main;
 
+import data.ClackData;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,13 +15,34 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import main.ClackClient;
 
+import java.util.Vector;
 
 
 public class ClackGUI extends Application {
 
-    public static void main(String[] args) {
+    private ClackClient client;
+    private Vector<ClackData> history;
+    private TextArea messageArea;
+
+
+    public ClackGUI(ClackClient client) {
+        this.client = client;
+    }
+
+    public void initialize(String[] args) {
         launch(args);
+    }
+
+    public void updateMessageList(ClackData message) {
+        history.add(message);
+        String messageHistory = "";
+        for (ClackData m : history) {
+            messageHistory += m.toString() + '\n';
+        }
+        messageArea.setText(messageHistory);
     }
 
     @Override
@@ -27,8 +52,7 @@ public class ClackGUI extends Application {
 
         Group root = new Group();
 
-        TextArea messageArea = new TextArea("There are no messages yet...");
-
+        messageArea = new TextArea("There are no messages yet...");
 
         TextArea userArea = new TextArea("Debug: No Users");
 
@@ -60,6 +84,30 @@ public class ClackGUI extends Application {
         sendMessage.setLayoutX(0);
         sendMessage.setLayoutY(500);
 
+        messageButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                client.sendData(client.createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDMESSAGE));
+                sendMessage.clear();
+
+            }
+        });
+
+        fileButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                client.sendData(client.createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDFILE));
+                sendMessage.clear();
+            }
+        });
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                client.sendData(client.createMessage("DONE", ClackData.CONSTANT_LOGOUT));
+            }
+        });
+
         Scene scene = new Scene(root, 600, 600);
         primaryStage.setTitle("Clack");
         primaryStage.setScene(scene);
@@ -71,4 +119,6 @@ public class ClackGUI extends Application {
 //        primaryStage.setScene(scene);
 //        primaryStage.show();
     }
+
+
 }

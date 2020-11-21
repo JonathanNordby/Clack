@@ -1,11 +1,11 @@
-package src.main;
+package main;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import src.data.ClackData;
+import data.ClackData;
 
 /**
  * The Server version of Clack

@@ -1,4 +1,4 @@
-package src.main;
+package main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,10 +8,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import src.data.ClackData;
-import src.data.FileClackData;
-import src.data.MessageClackData;
+import data.ClackData;
+import data.FileClackData;
+import data.MessageClackData;
 import javafx.application.Application;
+import sun.plugin2.message.Message;
 
 /**
  * The Client version of the Clack program
@@ -30,6 +31,7 @@ public class ClackClient {
 	private final String KEY = "Armavirumquecano";
 	private ObjectInputStream inFromServer;
 	private ObjectOutputStream outToServer;
+	private ClackGUI gui;
 
 	/**
 	 * Creates a ClackClient with a default port of 7000
@@ -75,9 +77,11 @@ public class ClackClient {
 	/**
 	 * Initializes a Client
 	 */
-	public void start() {
+	public void start(String[] args) {
 		try {
 			Socket connection = new Socket(hostName, port);
+			gui = new ClackGUI(this);
+			gui.initialize(args);
 			outToServer = new ObjectOutputStream(connection.getOutputStream());
 			inFromServer = new ObjectInputStream(connection.getInputStream());
 			inFromStd = new Scanner(System.in);
@@ -87,13 +91,14 @@ public class ClackClient {
 			dataToSendToServer = newUser;
 			sendData();
 
+
+
 			ClientSideServerListener server = new ClientSideServerListener(this);
 			Thread clientThread = new Thread(server);
 			clientThread.start();
 
 			while (!closeConnection) {
-				readClientData();
-				sendData();
+				receiveData();
 			}
 			inFromStd.close();
 			connection.close();
@@ -121,9 +126,9 @@ public class ClackClient {
 			input = inFromStd.nextLine();
 			if (input.startsWith("DONE")) {
 				closeConnection = true;
-				dataToSendToServer = new MessageClackData(userName, "DONE", ClackData.CONSTANT_LOGOUT);
+				dataToSendToServer = createMessage("DONE",ClackData.CONSTANT_LOGOUT);
 			} else if (input.startsWith("SENDFILE")) {
-				dataToSendToServer = new FileClackData(userName, input.substring("SENDFILE".length() + 1), ClackData.CONSTANT_SENDFILE);
+				dataToSendToServer = createMessage(input.substring("SENDFILE".length() + 1), ClackData.CONSTANT_SENDFILE);
 				if (dataToSendToServer instanceof FileClackData) {
 					try {
 						((FileClackData) dataToSendToServer).readFileContents(KEY);
@@ -133,10 +138,28 @@ public class ClackClient {
 					((FileClackData) dataToSendToServer).writeFileContents(KEY);
 				}
 			} else if (input.startsWith("LISTUSERS")) {
-				dataToSendToServer = new MessageClackData(userName, "", ClackData.CONSTANT_LISTUSERS);
+				dataToSendToServer = createMessage("", ClackData.CONSTANT_LISTUSERS);
 			} else {
-				dataToSendToServer = new MessageClackData(userName, input, KEY, ClackData.CONSTANT_SENDMESSAGE);
+				dataToSendToServer = createMessage(input, ClackData.CONSTANT_SENDMESSAGE);
 			}
+		}
+	}
+
+	public ClackData createMessage(String message, int type) {
+
+		switch (type) {
+			case ClackData.CONSTANT_LISTUSERS:
+				return new MessageClackData(userName, "", ClackData.CONSTANT_LISTUSERS);
+			case ClackData.CONSTANT_LOGOUT:
+				return new MessageClackData(userName, "DONE", ClackData.CONSTANT_LOGOUT);
+			case ClackData.CONSTANT_SENDMESSAGE:
+				return new MessageClackData(userName, message, KEY, ClackData.CONSTANT_SENDMESSAGE);
+			case ClackData.CONSTANT_SENDFILE:
+				return new FileClackData(userName, message, ClackData.CONSTANT_SENDFILE);
+			case ClackData.CONSTANT_NEWUSER:
+				return new MessageClackData(userName, userName, ClackData.CONSTANT_NEWUSER);
+			default:
+				return null;
 		}
 	}
 
@@ -151,6 +174,18 @@ public class ClackClient {
 			e.printStackTrace();
 		}
 	}
+
+	public void sendData(ClackData dataToSendToServer) {
+		this.dataToSendToServer = dataToSendToServer;
+		try {
+			outToServer.writeObject(dataToSendToServer);
+		} catch (IOException e) {
+			System.err.println("Cannot Write Object");
+			e.printStackTrace();
+		}
+	}
+
+
 
 	/**
 	 * reads data out of the InputStream and stores it in a buffer.
@@ -257,19 +292,18 @@ public class ClackClient {
 	 */
 	public static void main(String[] args) {
 		ClackClient client;
-		ClackGUI.main(args);
 		if (args.length >= 1) {
 			String[] arguments = args[0].split("(@|:)");
 			try {
 				if (arguments.length == 1) {
 					client = new ClackClient(arguments[0]);
-					client.start();
+					client.start(args);
 				} else if (arguments.length == 2) {
 					client = new ClackClient(arguments[0], arguments[1]);
-					client.start();
+					client.start(args);
 				} else if (arguments.length == 3) {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
-					client.start();
+					client.start(args);
 				}
 			} catch (NumberFormatException nfe) {
 				System.err.println("NumberFormatException invalid port number format");
@@ -278,7 +312,7 @@ public class ClackClient {
 			}
 		} else {
 			client = new ClackClient();
-			client.start();
+			client.start(args);
 		}
 	}
 }
