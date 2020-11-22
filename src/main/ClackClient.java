@@ -13,6 +13,7 @@ import data.ClackData;
 import data.FileClackData;
 import data.ImageClackData;
 import data.MessageClackData;
+import data.VideoClackData;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -29,7 +30,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import sun.plugin2.message.Message;
 
 /**
  * The Client version of the Clack program
@@ -50,6 +50,7 @@ public class ClackClient extends Application {
 	private ObjectOutputStream outToServer;
 	private Vector<ClackData> history;
 	private Group messageHistoryArea;
+	private Socket connection;
 
 
 	/**
@@ -117,7 +118,8 @@ public class ClackClient extends Application {
 		messageButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				sendData(createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDMESSAGE));
+				dataToSendToServer = createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDMESSAGE);
+				sendData();
 				sendMessage.clear();
 
 			}
@@ -126,7 +128,8 @@ public class ClackClient extends Application {
 		fileButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				sendData(createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDFILE));
+				dataToSendToServer = createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDFILE);
+				sendData();
 				sendMessage.clear();
 			}
 		});
@@ -134,7 +137,8 @@ public class ClackClient extends Application {
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				sendData(createMessage("DONE", ClackData.CONSTANT_LOGOUT));
+				dataToSendToServer = createMessage("DONE", ClackData.CONSTANT_LOGOUT);
+				sendData();
 			}
 		});
 
@@ -168,7 +172,7 @@ public class ClackClient extends Application {
 	 */
 	public void start(String[] args) {
 		try {
-			Socket connection = new Socket(hostName, port);
+			connection = new Socket(hostName, port);
 			outToServer = new ObjectOutputStream(connection.getOutputStream());
 			inFromServer = new ObjectInputStream(connection.getInputStream());
 			inFromStd = new Scanner(System.in);
@@ -183,6 +187,8 @@ public class ClackClient extends Application {
 			ClientSideServerListener server = new ClientSideServerListener(this);
 			Thread clientThread = new Thread(server);
 			clientThread.start();
+
+			launch(args);
 
 			while (!closeConnection) {
 				receiveData();
@@ -261,18 +267,6 @@ public class ClackClient extends Application {
 			e.printStackTrace();
 		}
 	}
-
-	public void sendData(ClackData dataToSendToServer) {
-		this.dataToSendToServer = dataToSendToServer;
-		try {
-			outToServer.writeObject(dataToSendToServer);
-		} catch (IOException e) {
-			System.err.println("Cannot Write Object");
-			e.printStackTrace();
-		}
-	}
-
-
 
 	/**
 	 * reads data out of the InputStream and stores it in a buffer.
