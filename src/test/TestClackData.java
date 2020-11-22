@@ -1,9 +1,9 @@
-package test;
-import data.MessageClackData;
+package src.test;
+import src.data.MessageClackData;
 
 import java.io.IOException;
-import data.ClackData;
-import data.FileClackData;
+import src.data.ClackData;
+import src.data.FileClackData;
 
 /**
  * test class for the data package

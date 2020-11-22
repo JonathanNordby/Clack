@@ -1,9 +1,6 @@
-package data;
+package src.data;
 
 import javafx.scene.image.Image;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class ImageClackData extends ClackData {
 
@@ -17,7 +14,7 @@ public class ImageClackData extends ClackData {
     }
 
     public ImageClackData() {
-        this("Anon", "", 0);
+        this("Anon", "",ClackData.CONSTANT_SENDIMAGE);
     }
 
     public void setImageLocation(String imageLoc) {
@@ -29,9 +26,7 @@ public class ImageClackData extends ClackData {
         return imageLoc;
     }
 
-    public Image getImage() {
-        return image;
-    }
+    public Image getImage(){return image;}
 
     @Override
     public String getData() {

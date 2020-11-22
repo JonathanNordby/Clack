@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import data.ClackData;
-import data.MessageClackData;
+import src.data.ClackData;
+import src.data.MessageClackData;
 
 /**
  * an I/O Module for interacting with a client and a server

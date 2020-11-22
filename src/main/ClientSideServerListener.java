@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 /**
  * @author Sephen Miner <br> Jonathan Nordby

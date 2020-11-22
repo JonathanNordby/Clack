@@ -1,6 +1,6 @@
-package test;
+package src.test;
 
-import main.ClackClient;
+import src.main.ClackClient;
 
 public class TestClackClient {
 
@@ -43,9 +43,7 @@ public class TestClackClient {
 		
 		System.out.println();
 		System.out.println("Client 2 Initalizing");
-		testClient2.start(args);
 		System.out.println("Client 3 Initializing");
-		testClient3.start(args);
 		System.out.println("Client 4 Initializing");
 		
 	}

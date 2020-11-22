@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,11 +9,11 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.Vector;
 
-import data.ClackData;
-import data.FileClackData;
-import data.ImageClackData;
-import data.MessageClackData;
-import data.VideoClackData;
+import src.data.ClackData;
+import src.data.FileClackData;
+import src.data.ImageClackData;
+import src.data.MessageClackData;
+import src.data.VideoClackData;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -79,6 +79,21 @@ public class ClackClient extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+
+		connection = new Socket(hostName, port);
+		outToServer = new ObjectOutputStream(connection.getOutputStream());
+		inFromServer = new ObjectInputStream(connection.getInputStream());
+		inFromStd = new Scanner(System.in);
+
+		closeConnection = false;
+
+		MessageClackData newUser = new MessageClackData(this.getUserName(), this.getUserName(), ClackData.CONSTANT_NEWUSER);
+		dataToSendToServer = newUser;
+		sendData();
+
+		ClientSideServerListener server = new ClientSideServerListener(this);
+		Thread clientThread = new Thread(server);
+		clientThread.start();
 
 		System.out.println("Generating GUI");
 
@@ -147,6 +162,16 @@ public class ClackClient extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
+		while (!closeConnection) {
+			receiveData();
+		}
+
+		System.out.println("we are closing down");
+		inFromStd.close();
+		connection.close();
+		inFromServer.close();
+		outToServer.close();
+		System.exit(0);
 
 	}
 
@@ -170,45 +195,6 @@ public class ClackClient extends Application {
 	/**
 	 * Initializes a Client
 	 */
-	public void start(String[] args) {
-		try {
-			connection = new Socket(hostName, port);
-			outToServer = new ObjectOutputStream(connection.getOutputStream());
-			inFromServer = new ObjectInputStream(connection.getInputStream());
-			inFromStd = new Scanner(System.in);
-			closeConnection = false;
-
-			MessageClackData newUser = new MessageClackData(this.getUserName(), this.getUserName(), ClackData.CONSTANT_NEWUSER);
-			dataToSendToServer = newUser;
-			sendData();
-
-
-
-			ClientSideServerListener server = new ClientSideServerListener(this);
-			Thread clientThread = new Thread(server);
-			clientThread.start();
-
-			launch(args);
-
-			while (!closeConnection) {
-				receiveData();
-			}
-			inFromStd.close();
-			connection.close();
-			inFromServer.close();
-			outToServer.close();
-			System.exit(0);
-		} catch (UnknownHostException e) {
-			System.err.println("Cannot resolve IP Address");
-			e.printStackTrace();
-		} catch (ConnectException ce) {
-			System.err.println("Could not connect to the server.");
-		} catch (IOException e) {
-			System.err.println("I/O Error occurred");
-			e.printStackTrace();
-		}
-
-	}
 
 	/**
 	 * Reads in data provided in standard input
@@ -406,15 +392,12 @@ public class ClackClient extends Application {
 			try {
 				if (arguments.length == 1) {
 					client = new ClackClient(arguments[0]);
-					client.start(args);
 					launch(args);
 				} else if (arguments.length == 2) {
 					client = new ClackClient(arguments[0], arguments[1]);
-					client.start(args);
 					launch(args);
 				} else if (arguments.length == 3) {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
-					client.start(args);
 					launch(args);
 				}
 			} catch (NumberFormatException nfe) {
@@ -424,7 +407,6 @@ public class ClackClient extends Application {
 			}
 		} else {
 			client = new ClackClient();
-			client.start(args);
 			launch(args);
 		}
 	}
