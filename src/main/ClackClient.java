@@ -80,20 +80,15 @@ public class ClackClient extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		connection = new Socket(hostName, port);
+		Socket connection = new Socket(hostName, port);
 		outToServer = new ObjectOutputStream(connection.getOutputStream());
 		inFromServer = new ObjectInputStream(connection.getInputStream());
 		inFromStd = new Scanner(System.in);
-
 		closeConnection = false;
 
 		MessageClackData newUser = new MessageClackData(this.getUserName(), this.getUserName(), ClackData.CONSTANT_NEWUSER);
 		dataToSendToServer = newUser;
 		sendData();
-
-		ClientSideServerListener server = new ClientSideServerListener(this);
-		Thread clientThread = new Thread(server);
-		clientThread.start();
 
 		System.out.println("Generating GUI");
 
@@ -133,10 +128,10 @@ public class ClackClient extends Application {
 		messageButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				System.out.println(dataToSendToServer);
 				dataToSendToServer = createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDMESSAGE);
 				sendData();
 				sendMessage.clear();
-
 			}
 		});
 
@@ -162,17 +157,27 @@ public class ClackClient extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
-		while (!closeConnection) {
-			receiveData();
-		}
 
-		System.out.println("we are closing down");
-		inFromStd.close();
-		connection.close();
-		inFromServer.close();
-		outToServer.close();
-		System.exit(0);
+	}
 
+	public void start(String[] args){
+
+		try {
+
+			ClientSideServerListener server = new ClientSideServerListener(this);
+			Thread clientThread = new Thread(server);
+			clientThread.start();
+
+			launch(args);
+			while (!closeConnection) { }
+
+			System.out.println("we are closing down");
+			inFromStd.close();
+			connection.close();
+			inFromServer.close();
+			outToServer.close();
+			System.exit(0);
+		}catch(Exception e) {}
 	}
 
 	/**
@@ -392,22 +397,24 @@ public class ClackClient extends Application {
 			try {
 				if (arguments.length == 1) {
 					client = new ClackClient(arguments[0]);
-					launch(args);
+					client.start(args);
 				} else if (arguments.length == 2) {
 					client = new ClackClient(arguments[0], arguments[1]);
-					launch(args);
+					client.start(args);
 				} else if (arguments.length == 3) {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
-					launch(args);
+					client.start(args);
 				}
 			} catch (NumberFormatException nfe) {
 				System.err.println("NumberFormatException invalid port number format");
 			} catch (IllegalArgumentException iae) {
 				System.err.println("IllegalArgumentException invalid number of arguments");
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		} else {
 			client = new ClackClient();
-			launch(args);
+			client.start(args);
 		}
 	}
 }
