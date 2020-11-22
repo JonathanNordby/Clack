@@ -13,6 +13,7 @@ import data.ClackData;
 import data.FileClackData;
 import data.ImageClackData;
 import data.MessageClackData;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -411,19 +412,16 @@ public class ClackClient extends Application {
 			try {
 				if (arguments.length == 1) {
 					client = new ClackClient(arguments[0]);
-					ClackGUI gui = new ClackGUI(client);
 					client.start(args);
-					gui.initialize(args);
+					launch(args);
 				} else if (arguments.length == 2) {
 					client = new ClackClient(arguments[0], arguments[1]);
-					ClackGUI gui = new ClackGUI(client);
 					client.start(args);
-					gui.initialize(args);
+					launch(args);
 				} else if (arguments.length == 3) {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
-					ClackGUI gui = new ClackGUI(client);
 					client.start(args);
-					gui.initialize(args);
+					launch(args);
 				}
 			} catch (NumberFormatException nfe) {
 				System.err.println("NumberFormatException invalid port number format");
@@ -432,9 +430,8 @@ public class ClackClient extends Application {
 			}
 		} else {
 			client = new ClackClient();
-			ClackGUI gui = new ClackGUI(client);
 			client.start(args);
-			gui.initialize(args);
+			launch(args);
 		}
 	}
 }
