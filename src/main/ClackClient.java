@@ -16,6 +16,7 @@ import data.MessageClackData;
 import data.VideoClackData;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -100,48 +101,13 @@ public class ClackClient extends Application {
 		System.out.println("Generating GUI");
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ClackGUI.fxml"));
-		Parent root = loader.load();
-		controller = loader.getController();
-		controller.initialize(this);
+		Object obj = new Object();
+		Parent root;
 
-		ClientSideServerListener server = new ClientSideServerListener(this);
-		Thread clientThread = new Thread(server);
-		clientThread.start();
+		root = loadGraphics(loader);
+		launchListener();
 
-//		Group root = new Group();
-//
-//		messageHistoryArea = new Group();
-//
-//		userArea = new TextArea("Debug: No Users");
-//
-//		TextField sendMessage = new TextField();
-//		sendMessage.setPromptText("Send Message...");
-//
-//		Button messageButton = new Button("Send Message");
-//
-//		Button fileButton = new Button("Send File");
-//
-//		Button secretButton = new Button();
-//
-//		root.getChildren().add(messageHistoryArea);
-//		root.getChildren().add(userArea);
-//		root.getChildren().add(sendMessage);
-//		root.getChildren().add(messageButton);
-//		root.getChildren().add(fileButton);
-//		userArea.setPrefSize(100,500);
-//		sendMessage.setPrefSize(400,100);
-//		messageButton.setPrefSize(100,100);
-//		fileButton.setPrefSize(100,100);
-//		messageHistoryArea.setLayoutX(0);
-//		messageHistoryArea.setLayoutY(0);
-//		userArea.setLayoutX(500);
-//		userArea.setLayoutY(0);
-//		messageButton.setLayoutX(400);
-//		messageButton.setLayoutY(500);
-//		fileButton.setLayoutX(500);
-//		fileButton.setLayoutY(500);
-//		sendMessage.setLayoutX(0);
-//		sendMessage.setLayoutY(500);
+
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -159,6 +125,20 @@ public class ClackClient extends Application {
 
 	}
 
+	public synchronized Parent loadGraphics (FXMLLoader loader) throws IOException {
+		Parent root = loader.load();
+		controller = loader.getController();
+		controller.initialize(this);
+		notifyAll();
+		return root;
+	}
+
+
+	public synchronized void launchListener() {
+		ClientSideServerListener server = new ClientSideServerListener(this);
+		Thread clientThread = new Thread(server);
+		clientThread.start();
+	}
 
 
 	public void initialize(String[] args){
@@ -191,6 +171,7 @@ public class ClackClient extends Application {
 		this.port = port;
 		inFromServer = null;
 		outToServer = null;
+		history = new Vector<ClackData>();
 	}
 
 	public String getData(ClackData data) {
@@ -275,6 +256,7 @@ public class ClackClient extends Application {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Time to update the History!");
 		history.add(dataToReceiveFromServer);
 		controller.updateMessageList();
 	}

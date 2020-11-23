@@ -1,11 +1,12 @@
 package main;
 
 /**
- * @author Sephen Miner <br> Jonathan Nordby
+ * @author Stephen Miner <br> Jonathan Nordby
  */
 public class ClientSideServerListener implements Runnable {
 
     private ClackClient client;
+    private boolean firstRun = true;
 
     /**
      * Creates a ClientSideServerListener object
@@ -14,7 +15,9 @@ public class ClientSideServerListener implements Runnable {
     ClientSideServerListener(ClackClient client) { this.client = client; }
 
     @Override
-    public void run() {
+    public synchronized void run() {
+
+
         while(!client.getConnectionStatus()) {
             client.receiveData();
         }

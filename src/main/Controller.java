@@ -7,12 +7,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -28,6 +30,8 @@ public class Controller {
     @FXML private Button messageButton;
     @FXML private Button fileButton;
     @FXML private VBox messageHistory;
+    @FXML private GridPane root;
+    @FXML private Parent parent;
 
     private ClackClient client;
     private boolean messageServiceStarted = false;
@@ -60,9 +64,10 @@ public class Controller {
         event.consume();
     }
 
-    public void initialize(ClackClient client) {
+    public synchronized void initialize(ClackClient client) {
 
         this.client = client;
+        parent = root.getParent();
 
 
         messageService = new Service() {
@@ -100,6 +105,7 @@ public class Controller {
                 Task<Vector<ClackData>> task = new Task<Vector<ClackData>>() {
                     @Override
                     protected Vector<ClackData> call() throws Exception {
+                        System.out.println("History: " + client.getHistory());
                         messageHistory.getChildren().removeAll();
                         for (ClackData message : client.getHistory()) {
                             Node messageToDisplay;
@@ -135,6 +141,7 @@ public class Controller {
                 return null;
             }
         };
+        notifyAll();
     }
 
     public void updateMessageList() {
