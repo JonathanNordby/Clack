@@ -24,21 +24,21 @@
          <bottom>
             <HBox prefHeight="7.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <TextField prefHeight="25.0" prefWidth="541.0" promptText="Send Message..." />
-                  <VBox prefHeight="50.0" prefWidth="216.0">
+                  <TextField fx:id="sendMessage" prefHeight="25.0" prefWidth="541.0" promptText="Send Message..." />
+                  <VBox fx:id="buttonArea" prefHeight="50.0" prefWidth="216.0">
                      <children>
-                        <Button mnemonicParsing="false" text="Send Message" />
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="93.0" text="Send File" />
+                        <Button fx:id="messageButton" mnemonicParsing="false" onAction="#messageButtonClicked" text="Send Message" />
+                        <Button fx:id="fileButton" mnemonicParsing="false" onAction="#fileButtonClicked" prefHeight="25.0" prefWidth="93.0" text="Send File" />
                      </children>
                   </VBox>
                </children>
             </HBox>
          </bottom>
          <right>
-            <TextArea prefHeight="200.0" prefWidth="200.0" text="DEBUG USERS" BorderPane.alignment="CENTER" />
+            <TextArea fx:id="userArea" prefHeight="200.0" prefWidth="200.0" text="DEBUG USERS" BorderPane.alignment="CENTER" />
          </right>
          <left>
-            <TextArea prefHeight="452.0" prefWidth="322.0" BorderPane.alignment="CENTER" />
+            <TextArea fx:id="messageHistoryArea" prefHeight="452.0" prefWidth="322.0" BorderPane.alignment="CENTER" />
          </left>
       </BorderPane>
    </children>
