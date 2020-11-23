@@ -1,4 +1,4 @@
-package src.main;
+package main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,19 +9,25 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.Vector;
 
-import src.data.ClackData;
-import src.data.FileClackData;
-import src.data.ImageClackData;
-import src.data.MessageClackData;
-import src.data.VideoClackData;
+import data.ClackData;
+import data.FileClackData;
+import data.ImageClackData;
+import data.MessageClackData;
+import data.VideoClackData;
 
 import javafx.application.Application;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -51,6 +57,7 @@ public class ClackClient extends Application {
 	private Vector<ClackData> history;
 	private Group messageHistoryArea;
 	private Socket connection;
+	private TextArea userArea;
 
 
 	/**
@@ -86,63 +93,55 @@ public class ClackClient extends Application {
 		inFromStd = new Scanner(System.in);
 		closeConnection = false;
 
+		ClientSideServerListener server = new ClientSideServerListener(this);
+		Thread clientThread = new Thread(server);
+		clientThread.start();
+
 		MessageClackData newUser = new MessageClackData(this.getUserName(), this.getUserName(), ClackData.CONSTANT_NEWUSER);
 		dataToSendToServer = newUser;
 		sendData();
 
 		System.out.println("Generating GUI");
 
-		Group root = new Group();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("ClackGUI.fxml"));
+		Parent root = loader.load();
+		Controller controller = loader.getController();
+		controller.initialize(this);
 
-		messageHistoryArea = new Group();
-
-		TextArea userArea = new TextArea("Debug: No Users");
-
-		TextField sendMessage = new TextField();
-		sendMessage.setPromptText("Send Message...");
-
-		Button messageButton = new Button("Send Message");
-
-		Button fileButton = new Button("Send File");
-
-		root.getChildren().add(messageHistoryArea);
-		root.getChildren().add(userArea);
-		root.getChildren().add(sendMessage);
-		root.getChildren().add(messageButton);
-		root.getChildren().add(fileButton);
-		userArea.setPrefSize(100,500);
-		sendMessage.setPrefSize(400,100);
-		messageButton.setPrefSize(100,100);
-		fileButton.setPrefSize(100,100);
-		messageHistoryArea.setLayoutX(0);
-		messageHistoryArea.setLayoutY(0);
-		userArea.setLayoutX(500);
-		userArea.setLayoutY(0);
-		messageButton.setLayoutX(400);
-		messageButton.setLayoutY(500);
-		fileButton.setLayoutX(500);
-		fileButton.setLayoutY(500);
-		sendMessage.setLayoutX(0);
-		sendMessage.setLayoutY(500);
-
-		messageButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.println(dataToSendToServer);
-				dataToSendToServer = createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDMESSAGE);
-				sendData();
-				sendMessage.clear();
-			}
-		});
-
-		fileButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				dataToSendToServer = createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDFILE);
-				sendData();
-				sendMessage.clear();
-			}
-		});
+//		Group root = new Group();
+//
+//		messageHistoryArea = new Group();
+//
+//		userArea = new TextArea("Debug: No Users");
+//
+//		TextField sendMessage = new TextField();
+//		sendMessage.setPromptText("Send Message...");
+//
+//		Button messageButton = new Button("Send Message");
+//
+//		Button fileButton = new Button("Send File");
+//
+//		Button secretButton = new Button();
+//
+//		root.getChildren().add(messageHistoryArea);
+//		root.getChildren().add(userArea);
+//		root.getChildren().add(sendMessage);
+//		root.getChildren().add(messageButton);
+//		root.getChildren().add(fileButton);
+//		userArea.setPrefSize(100,500);
+//		sendMessage.setPrefSize(400,100);
+//		messageButton.setPrefSize(100,100);
+//		fileButton.setPrefSize(100,100);
+//		messageHistoryArea.setLayoutX(0);
+//		messageHistoryArea.setLayoutY(0);
+//		userArea.setLayoutX(500);
+//		userArea.setLayoutY(0);
+//		messageButton.setLayoutX(400);
+//		messageButton.setLayoutY(500);
+//		fileButton.setLayoutX(500);
+//		fileButton.setLayoutY(500);
+//		sendMessage.setLayoutX(0);
+//		sendMessage.setLayoutY(500);
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -160,16 +159,13 @@ public class ClackClient extends Application {
 
 	}
 
-	public void start(String[] args){
+
+
+	public void initialize(String[] args){
 
 		try {
-
-			ClientSideServerListener server = new ClientSideServerListener(this);
-			Thread clientThread = new Thread(server);
-			clientThread.start();
-
 			launch(args);
-			while (!closeConnection) { }
+			//while (!closeConnection) { }
 
 			System.out.println("we are closing down");
 			inFromStd.close();
@@ -259,6 +255,11 @@ public class ClackClient extends Application {
 		}
 	}
 
+	public void sendData(ClackData data) {
+		dataToSendToServer = data;
+		sendData();
+	}
+
 	/**
 	 * reads data out of the InputStream and stores it in a buffer.
 	 */
@@ -289,20 +290,24 @@ public class ClackClient extends Application {
 		}
 	}
 
-	public void updateMessageList(ClackData message) {
+	public void updateMessageList() {
 
 		Node messageToDisplay;
 
-		history.add(message);
-		if (message instanceof MessageClackData || message instanceof FileClackData) {
-			messageToDisplay = new TextArea(message.getData(KEY));
-			((TextArea) messageToDisplay).setEditable(false);
+//		history.add(dataToReceiveFromServer);
+		if (dataToReceiveFromServer instanceof MessageClackData || dataToReceiveFromServer instanceof FileClackData) {
+			if (dataToReceiveFromServer.getType() != ClackData.CONSTANT_NEWUSER) {
+				messageToDisplay = new TextArea(dataToReceiveFromServer.getData(KEY));
+				((TextArea) messageToDisplay).setEditable(false);
+				messageHistoryArea.getChildren().add(messageToDisplay);
+			} else {
+				userArea.setText(userArea.getText().equals("Debug: No Users") ? dataToReceiveFromServer.getUserName() : userArea.getText() + dataToReceiveFromServer.getUserName());
+			}
+		} else if (dataToReceiveFromServer instanceof ImageClackData) {
+			messageToDisplay = new ImageView(((ImageClackData) dataToReceiveFromServer).getImage());
 			messageHistoryArea.getChildren().add(messageToDisplay);
-		} else if (message instanceof ImageClackData) {
-			messageToDisplay = new ImageView(((ImageClackData) message).getImage());
-			messageHistoryArea.getChildren().add(messageToDisplay);
-		} else if (message instanceof VideoClackData) {
-			MediaPlayer player = new MediaPlayer(((VideoClackData) message).getVideo());
+		} else if (dataToReceiveFromServer instanceof VideoClackData) {
+			MediaPlayer player = new MediaPlayer(((VideoClackData) dataToReceiveFromServer).getVideo());
 			messageToDisplay = new MediaView(player);
 			messageToDisplay.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 				@Override
@@ -384,6 +389,8 @@ public class ClackClient extends Application {
 				+ dataToReceiveFromServer.toString() + " " + dataToSendToServer.toString();
 	}
 
+
+
 	/**
 	 * Main method, takes in user input from the command line and initializes the
 	 * client accordingly.
@@ -397,13 +404,13 @@ public class ClackClient extends Application {
 			try {
 				if (arguments.length == 1) {
 					client = new ClackClient(arguments[0]);
-					client.start(args);
+					client.initialize(args);
 				} else if (arguments.length == 2) {
 					client = new ClackClient(arguments[0], arguments[1]);
-					client.start(args);
+					client.initialize(args);
 				} else if (arguments.length == 3) {
 					client = new ClackClient(arguments[0], arguments[1], Integer.parseInt(arguments[2]));
-					client.start(args);
+					client.initialize(args);
 				}
 			} catch (NumberFormatException nfe) {
 				System.err.println("NumberFormatException invalid port number format");
@@ -414,7 +421,7 @@ public class ClackClient extends Application {
 			}
 		} else {
 			client = new ClackClient();
-			client.start(args);
+			client.initialize(args);
 		}
 	}
 }
