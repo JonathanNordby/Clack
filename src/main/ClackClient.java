@@ -59,6 +59,7 @@ public class ClackClient extends Application {
 	private Socket connection;
 	private TextArea userArea;
 	private Controller controller;
+	public boolean hasGuiInit = false;
 
 
 	/**
@@ -105,8 +106,14 @@ public class ClackClient extends Application {
 		Parent root;
 
 		root = loadGraphics(loader);
-		launchListener();
 
+		ClientSideServerListener server = new ClientSideServerListener(this);
+		Thread clientThread = new Thread(server);
+		clientThread.start();
+
+		//launchListener();
+
+		server.notifyAll();
 
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -129,16 +136,15 @@ public class ClackClient extends Application {
 		Parent root = loader.load();
 		controller = loader.getController();
 		controller.initialize(this);
-		notifyAll();
 		return root;
 	}
 
 
-	public synchronized void launchListener() {
-		ClientSideServerListener server = new ClientSideServerListener(this);
-		Thread clientThread = new Thread(server);
-		clientThread.start();
-	}
+//	public synchronized void launchListener() {
+//		ClientSideServerListener server = new ClientSideServerListener(this);
+//		Thread clientThread = new Thread(server);
+//		clientThread.start();
+//	}
 
 
 	public void initialize(String[] args){

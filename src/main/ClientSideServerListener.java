@@ -19,7 +19,17 @@ public class ClientSideServerListener implements Runnable {
 
 
         while(!client.getConnectionStatus()) {
-            client.receiveData();
+            if (!client.hasGuiInit) {
+                try {
+                    System.out.println("GUI not init");
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                client.receiveData();
+
+            }
         }
     }
 }

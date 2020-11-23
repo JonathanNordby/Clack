@@ -83,6 +83,7 @@ public class Controller {
                 return task;
             }
         };
+        System.out.println("Message Service started");
 
         fileService = new Service() {
             @Override
@@ -97,6 +98,8 @@ public class Controller {
                 return task;
             }
         };
+
+        System.out.println("File Service started");
 
         updateService = new Service() {
 
@@ -124,12 +127,9 @@ public class Controller {
                             } else if (message instanceof VideoClackData) {
                                 MediaPlayer player = new MediaPlayer(((VideoClackData) message).getVideo());
                                 messageToDisplay = new MediaView(player);
-                                messageToDisplay.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        player.play();
-                                        event.consume();
-                                    }
+                                messageToDisplay.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+                                    player.play();
+                                    event.consume();
                                 });
                             } else {
                                 System.err.println("Invalid Type");
@@ -141,6 +141,7 @@ public class Controller {
                 return null;
             }
         };
+        System.out.println("Update Service started");
         notifyAll();
     }
 
