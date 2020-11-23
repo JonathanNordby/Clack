@@ -55,9 +55,9 @@ public class ClackClient extends Application {
 	private ObjectInputStream inFromServer;
 	private ObjectOutputStream outToServer;
 	private Vector<ClackData> history;
-	private Group messageHistoryArea;
 	private Socket connection;
 	private TextArea userArea;
+	private Controller controller;
 
 
 	/**
@@ -93,10 +93,6 @@ public class ClackClient extends Application {
 		inFromStd = new Scanner(System.in);
 		closeConnection = false;
 
-		ClientSideServerListener server = new ClientSideServerListener(this);
-		Thread clientThread = new Thread(server);
-		clientThread.start();
-
 		MessageClackData newUser = new MessageClackData(this.getUserName(), this.getUserName(), ClackData.CONSTANT_NEWUSER);
 		dataToSendToServer = newUser;
 		sendData();
@@ -105,8 +101,12 @@ public class ClackClient extends Application {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ClackGUI.fxml"));
 		Parent root = loader.load();
-		Controller controller = loader.getController();
+		controller = loader.getController();
 		controller.initialize(this);
+
+		ClientSideServerListener server = new ClientSideServerListener(this);
+		Thread clientThread = new Thread(server);
+		clientThread.start();
 
 //		Group root = new Group();
 //
@@ -193,9 +193,9 @@ public class ClackClient extends Application {
 		outToServer = null;
 	}
 
-	/**
-	 * Initializes a Client
-	 */
+	public String getData(ClackData data) {
+		return data.getData(KEY);
+	}
 
 	/**
 	 * Reads in data provided in standard input
@@ -275,6 +275,8 @@ public class ClackClient extends Application {
 				e.printStackTrace();
 			}
 		}
+		history.add(dataToReceiveFromServer);
+		controller.updateMessageList();
 	}
 
 	/**
@@ -287,38 +289,6 @@ public class ClackClient extends Application {
 			}else if (dataToReceiveFromServer != null && (dataToReceiveFromServer.getType() != ClackData.CONSTANT_LOGOUT && dataToReceiveFromServer.getType() != ClackData.CONSTANT_NEWUSER)) {
 				System.out.println(dataToReceiveFromServer.getData(KEY));
 			}
-		}
-	}
-
-	public void updateMessageList() {
-
-		Node messageToDisplay;
-
-//		history.add(dataToReceiveFromServer);
-		if (dataToReceiveFromServer instanceof MessageClackData || dataToReceiveFromServer instanceof FileClackData) {
-			if (dataToReceiveFromServer.getType() != ClackData.CONSTANT_NEWUSER) {
-				messageToDisplay = new TextArea(dataToReceiveFromServer.getData(KEY));
-				((TextArea) messageToDisplay).setEditable(false);
-				messageHistoryArea.getChildren().add(messageToDisplay);
-			} else {
-				userArea.setText(userArea.getText().equals("Debug: No Users") ? dataToReceiveFromServer.getUserName() : userArea.getText() + dataToReceiveFromServer.getUserName());
-			}
-		} else if (dataToReceiveFromServer instanceof ImageClackData) {
-			messageToDisplay = new ImageView(((ImageClackData) dataToReceiveFromServer).getImage());
-			messageHistoryArea.getChildren().add(messageToDisplay);
-		} else if (dataToReceiveFromServer instanceof VideoClackData) {
-			MediaPlayer player = new MediaPlayer(((VideoClackData) dataToReceiveFromServer).getVideo());
-			messageToDisplay = new MediaView(player);
-			messageToDisplay.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					player.play();
-					event.consume();
-				}
-			});
-			messageHistoryArea.getChildren().add(messageToDisplay);
-		} else {
-			System.err.println("Invalid Type");
 		}
 	}
 
@@ -335,6 +305,10 @@ public class ClackClient extends Application {
 	}
 
 	public boolean getConnectionStatus() { return closeConnection; }
+
+	public Vector<ClackData> getHistory() {
+		return history;
+	}
 
 	@Override
 	public final int hashCode() {

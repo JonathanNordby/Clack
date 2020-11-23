@@ -1,4 +1,4 @@
-package src.main;
+package main;
 
 /**
  * @author Sephen Miner <br> Jonathan Nordby
@@ -17,7 +17,6 @@ public class ClientSideServerListener implements Runnable {
     public void run() {
         while(!client.getConnectionStatus()) {
             client.receiveData();
-            client.printData();
         }
     }
 }

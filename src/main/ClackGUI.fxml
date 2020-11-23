@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
@@ -35,10 +36,14 @@
             </HBox>
          </bottom>
          <right>
-            <TextArea fx:id="userArea" prefHeight="200.0" prefWidth="200.0" text="DEBUG USERS" BorderPane.alignment="CENTER" />
+            <TextArea fx:id="userArea" editable="false" prefHeight="200.0" prefWidth="200.0" text="DEBUG USERS" BorderPane.alignment="CENTER" />
          </right>
          <left>
-            <TextArea fx:id="messageHistoryArea" prefHeight="452.0" prefWidth="322.0" BorderPane.alignment="CENTER" />
+            <ScrollPane fx:id="messageHistoryAreaPane" prefHeight="452.0" prefWidth="312.0" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
+              <content>
+                <HBox id="messageHistory"/>
+              </content>
+            </ScrollPane>
          </left>
       </BorderPane>
    </children>
