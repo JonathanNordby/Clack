@@ -46,6 +46,7 @@ public class Controller {
     public void messageButtonClicked(ActionEvent event) {
         if (!messageServiceStarted) {
             messageService.start();
+            System.out.println("Message Service started");
             messageServiceStarted = true;
         } else {
             messageService.restart();
@@ -57,6 +58,7 @@ public class Controller {
     public void fileButtonClicked(ActionEvent event) {
         if (!fileServiceStarted) {
             fileService.start();
+            System.out.println("File Service started");
             fileServiceStarted = true;
         } else {
             fileService.restart();
@@ -64,26 +66,23 @@ public class Controller {
         event.consume();
     }
 
-    public synchronized void initialize(ClackClient client) {
+    public synchronized void initialize() {
 
-        this.client = client;
         parent = root.getParent();
 
 
         messageService = new Service() {
             @Override
             protected Task<Object> createTask() {
-                Task<Object> task = new Task<Object>() {
+                return new Task<Object>() {
                     @Override protected Object call() throws Exception {
                         client.sendData(client.createMessage(sendMessage.getText(), ClackData.CONSTANT_SENDMESSAGE));
                         sendMessage.clear();
                         return null;
                     }
                 };
-                return task;
             }
         };
-        System.out.println("Message Service started");
 
         fileService = new Service() {
             @Override
@@ -98,8 +97,6 @@ public class Controller {
                 return task;
             }
         };
-
-        System.out.println("File Service started");
 
         updateService = new Service() {
 
@@ -141,13 +138,15 @@ public class Controller {
                 return null;
             }
         };
-        System.out.println("Update Service started");
-        notifyAll();
+
     }
 
     public void updateMessageList() {
         if (!updateServiceStarted) {
+            System.out.println(updateService.getState());
+            System.out.println(Thread.currentThread());
             updateService.start();
+            System.out.println("Update Service started");
             updateServiceStarted = true;
         } else {
             updateService.restart();
